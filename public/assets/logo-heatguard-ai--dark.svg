@@ -1,0 +1,26 @@
+<svg viewBox="0 0 780 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0, 0) scale(9)">
+    <path
+      d="M12 2.5C8 4.5 5.33335 4.83333 3.50002 5C2.5 16.5 8.50002 20.3333 12 21.5C20.5 18.5 21.1667 9.66667 20.5 5C16.5 4.6 13.1667 3.16667 12 2.5Z"
+      fill="#4A60DD"
+      stroke="#4A60DD"
+      stroke-width="0.5"
+    />
+    <path
+      d="M6.5 15L8.5 13.8333M19 7.5L15.8602 9.5M18 15L15.8602 13.8333M5.5 7.5L8.5 9.5M12 5V8.375M12 19V11.75M12 11.75L15.8602 13.8333M12 11.75L8.5 13.8333M12 11.75L15.8602 9.5M12 11.75V8.375M12 11.75L8.5 9.5M15.8602 13.8333L17.5 12.5M15.8602 13.8333V16M8.5 13.8333L7 12.5M8.5 13.8333V16M15.8602 9.5V7.5M15.8602 9.5L17.5 10.5M12 8.375L14 7M12 8.375L10 7M8.5 9.5V7.5M8.5 9.5L7 10.5"
+      stroke="white"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+  <text
+    x="250"
+    y="120"
+    font-family="Pretendard, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-size="100"
+    fill="#000000"
+    dominant-baseline="middle"
+  >
+    <tspan font-weight="400">HeatGuard</tspan>
+  </text>
+</svg>

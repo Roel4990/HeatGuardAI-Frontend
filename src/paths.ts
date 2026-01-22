@@ -7,6 +7,10 @@ export const paths = {
     customers: '/dashboard/customers',
     integrations: '/dashboard/integrations',
     settings: '/dashboard/settings',
+		realTimeControl: '/dashboard/realTimeControl',
+		AIBestLocation: '/dashboard/AIBestLocation',
+		budgetSimulation: '/dashboard/budgetSimulation',
+		notice: '/dashboard/notice',
   },
   errors: { notFound: '/errors/not-found' },
 } as const;
