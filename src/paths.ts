@@ -11,6 +11,8 @@ export const paths = {
 		AIBestLocation: '/dashboard/AIBestLocation',
 		budgetSimulation: '/dashboard/budgetSimulation',
 		notice: '/dashboard/notice',
+		noticeCreate: '/dashboard/notice/create',
+		noticeDetail: '/dashboard/notice/detail',
   },
   errors: { notFound: '/errors/not-found' },
 } as const;
