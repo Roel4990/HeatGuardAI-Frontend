@@ -1,0 +1,70 @@
+'use client';
+
+import {
+	Box,
+	IconButton,
+	Paper,
+	Stack,
+	Typography,
+} from '@mui/material';
+import DescriptionIcon from '@mui/icons-material/Description';
+import DownloadIcon from '@mui/icons-material/Download';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { NoticeFile } from "@/types/notice/notice";
+
+interface NoticeDetailAttachmentsProps {
+	file: NoticeFile;
+}
+
+export function NoticeDetailAttachments({ file }: NoticeDetailAttachmentsProps) {
+	return (
+		<Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+			<Stack spacing={1.5}>
+				<Box display="flex" alignItems="center" gap={0.75}>
+					<AttachFileIcon
+						sx={{
+							fontSize: 18,
+							color: 'text.secondary',
+						}}
+					/>
+					<Typography fontWeight={600}>
+						첨부파일 (1)
+					</Typography>
+				</Box>
+
+				<Box
+					display="flex"
+					alignItems="center"
+					justifyContent="space-between"
+					sx={{
+						p: 2,
+						borderRadius: 1,
+						border: '1px solid #E5E7EB',
+						backgroundColor: '#F9FAFB',
+					}}
+				>
+					<Box display="flex" alignItems="center" gap={1}>
+						<DescriptionIcon color="action" />
+						<Box>
+							<Typography fontSize={14}>
+								{file.notice_file_nm}
+							</Typography>
+							<Typography fontSize={12} color="text.secondary">
+								{(file.notice_file_size / 1024).toFixed(1)} KB
+							</Typography>
+						</Box>
+					</Box>
+
+					<IconButton>
+						<DownloadIcon
+							onClick={() => {
+								// TODO: 실제 다운로드 로직 연결
+								// downloadFile(file.notice_file_link)
+							}}
+						/>
+					</IconButton>
+				</Box>
+			</Stack>
+		</Paper>
+	);
+}
