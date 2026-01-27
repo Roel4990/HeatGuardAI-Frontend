@@ -1,7 +1,7 @@
-import * as React from "react";
+import * as React from 'react';
+
+import { RealTimeControlLayout } from '@/app/dashboard/realTimeControl/components/realtimecontrollayout';
 
 export default function Page(): React.JSX.Element {
-	return (
-		<div>실시간 관제 페이지입니다.</div>
-	);
+	return <RealTimeControlLayout />;
 }

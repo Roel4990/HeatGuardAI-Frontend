@@ -1,0 +1,25 @@
+<svg
+  width="32"
+  height="48"
+  viewBox="0 0 32 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Pin body -->
+  <path
+    d="M16 0
+       C7.2 0 0 7.2 0 16
+       C0 28 16 48 16 48
+       C16 48 32 28 32 16
+       C32 7.2 24.8 0 16 0Z"
+    fill="#1E88E5"
+  />
+
+  <!-- Inner white circle -->
+  <circle
+    cx="16"
+    cy="16"
+    r="6"
+    fill="white"
+  />
+</svg>
