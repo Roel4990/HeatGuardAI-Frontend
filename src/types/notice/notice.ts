@@ -41,3 +41,16 @@ export interface NoticeDetail extends BaseNotice {
 	notice_content: string;
 	notice_file?: NoticeFile;
 }
+
+/**
+ * 공지사항 타입 별 색상 정리
+ */
+export const noticeTypeStyles: Record<
+	NoticeType,
+	{ bg: string; fg: string }
+> = {
+	공지: { bg: '#17AACF', fg: '#ffffff' },
+	업데이트: { bg: '#318CE8', fg: '#ffffff' },
+	점검: { bg: '#EDF1F3', fg: '#1f2933' },
+	이벤트: { bg: '#F59F0A', fg: '#ffffff' },
+};
