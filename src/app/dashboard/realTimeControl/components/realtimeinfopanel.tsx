@@ -4,7 +4,18 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import {
+	CartesianGrid,
+	Legend,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from 'recharts';
 
 import type { CoolingFogData } from '@/dummydata/coolingFogs';
 
@@ -106,8 +117,11 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 					<Typography variant="subtitle2" color="text.primary">
 						운영 및 담당자 정보
 					</Typography>
-					<Box sx={{ mt: 1 }}>
+					<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
 						<Chip label={fog.cf_state ? '운영중' : '중지'} color={fog.cf_state ? 'success' : 'error'} variant="filled" />
+						<Typography variant="body2" color="text.secondary">
+							설치날짜 {fog.cf_inst_date || '-'}
+						</Typography>
 					</Box>
 					<Box sx={{ mt: 2 }}>
 						<DetailRow label="소속" value={fog.cf_manager_dept} />
@@ -148,9 +162,70 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 		);
 	}
 
+	const chartData = React.useMemo(() => {
+		// TODO: Replace this dummy series mapping with real API history data.
+		return Object.entries(selectedCoolingFog.time)
+			.map(([time, values]) => ({
+				time,
+				selectedTemp: values.cf_selected_temp,
+				nearbyTemp: values.cf_nearby_temp,
+			}))
+			.sort((a, b) => a.time.localeCompare(b.time));
+	}, [selectedCoolingFog.time]);
+
 	return (
-		<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
-			<DetailState fog={selectedCoolingFog} />
-		</Card>
+		<Box className="space-y-6">
+			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
+				<DetailState fog={selectedCoolingFog} />
+			</Card>
+
+			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 2 }}>
+				<Box sx={{ px: 4, py: 3 }}>
+					<Typography variant="h6" sx={{ fontWeight: 700 }}>
+						냉방 성능 분석 (가동 기록, 24시간)
+					</Typography>
+					<Box sx={{ mt: 3 }}>
+						<Box
+							sx={{
+								height: 260,
+								width: '100%',
+								borderRadius: 2,
+								border: '1px solid',
+								borderColor: 'grey.200',
+								bgcolor: 'grey.100',
+								p: 2,
+							}}
+						>
+							{/* TODO: Replace with a real chart configuration and server-driven data. */}
+							<ResponsiveContainer width="100%" height="100%">
+								<LineChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="time" />
+									<YAxis />
+									<Tooltip />
+									<Legend verticalAlign="top" height={24} />
+									<Line
+										type="monotone"
+										dataKey="selectedTemp"
+										name="선택 위치 온도"
+										stroke="#2563eb"
+										strokeWidth={2}
+										dot={false}
+									/>
+									<Line
+										type="monotone"
+										dataKey="nearbyTemp"
+										name="주변 온도"
+										stroke="#f97316"
+										strokeWidth={2}
+										dot={false}
+									/>
+								</LineChart>
+							</ResponsiveContainer>
+						</Box>
+					</Box>
+				</Box>
+			</Card>
+		</Box>
 	);
 }
