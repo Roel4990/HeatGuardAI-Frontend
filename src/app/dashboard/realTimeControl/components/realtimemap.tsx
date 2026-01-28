@@ -5,7 +5,7 @@ import Script from 'next/script';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { cfmarkers } from '@/dummydata/cfmarkers';
+import { coolingFogs, type CoolingFogData } from '@/dummydata/coolingFogs';
 
 declare global {
 	interface Window {
@@ -13,9 +13,13 @@ declare global {
 	}
 }
 
+type RealTimeMapProps = {
+	onSelectCoolingFog: (fog: CoolingFogData) => void;
+};
+
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
 
-export function RealTimeMap(): React.JSX.Element {
+export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
 	const mapContainerRef = React.useRef<HTMLDivElement | null>(null);
 	const mapRef = React.useRef<any | null>(null);
 	const [isScriptReady, setIsScriptReady] = React.useState(false);
@@ -33,15 +37,20 @@ export function RealTimeMap(): React.JSX.Element {
 			zoom: 13,
 		});
 
-		cfmarkers.forEach((marker) => {
-			new window.naver.maps.Marker({
-				position: new window.naver.maps.LatLng(marker.lat, marker.lng),
+		// Marker click -> notify parent to update the info panel.
+		coolingFogs.forEach((fog) => {
+			const marker = new window.naver.maps.Marker({
+				position: new window.naver.maps.LatLng(fog.lat, fog.lng),
 				map,
+			});
+
+			window.naver.maps.Event.addListener(marker, 'click', () => {
+				onSelectCoolingFog(fog);
 			});
 		});
 
 		mapRef.current = map;
-	}, [isScriptReady]);
+	}, [isScriptReady, onSelectCoolingFog]);
 
 	return (
 		<div style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -70,15 +79,8 @@ export function RealTimeMap(): React.JSX.Element {
 					gap: 1,
 				}}
 			>
-				<Box
-					component="img"
-					src="/assets/marker.svg"
-					alt="쿨링포그 설치 위치"
-					sx={{ width: 16, height: 16 }}
-				/>
-				<Typography sx={{ fontSize: 16, fontWeight: 700 }}>
-					쿨링포그 설치 위치
-				</Typography>
+				<Box component="img" src="/assets/marker.svg" alt="쿨링포그 설치 위치" sx={{ width: 16, height: 16 }} />
+				<Typography sx={{ fontSize: 16, fontWeight: 700 }}>쿨링포그 설치 위치</Typography>
 			</Box>
 		</div>
 	);

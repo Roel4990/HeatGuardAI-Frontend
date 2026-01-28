@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -5,8 +7,12 @@ import Typography from '@mui/material/Typography';
 
 import { RealTimeInfoPanel } from './realtimeinfopanel';
 import { RealTimeMap } from './realtimemap';
+import type { CoolingFogData } from '@/dummydata/coolingFogs';
 
 export function RealTimeControlLayout(): React.JSX.Element {
+	// Selected marker state lives here and is passed down to children.
+	const [selectedCoolingFog, setSelectedCoolingFog] = React.useState<CoolingFogData | null>(null);
+
 	return (
 		<Stack
 			spacing={2}
@@ -24,9 +30,7 @@ export function RealTimeControlLayout(): React.JSX.Element {
 				},
 			}}
 		>
-			<Typography sx={{ fontSize: 30, fontWeight: 800}}>
-				실시간 관제
-			</Typography>
+			<Typography sx={{ fontSize: 30, fontWeight: 800 }}>실시간 관제</Typography>
 			<Box
 				sx={{
 					height: 600,
@@ -39,9 +43,9 @@ export function RealTimeControlLayout(): React.JSX.Element {
 					boxShadow: 1,
 				}}
 			>
-				<RealTimeMap />
+				<RealTimeMap onSelectCoolingFog={setSelectedCoolingFog} />
 			</Box>
-			<RealTimeInfoPanel />
+			<RealTimeInfoPanel selectedCoolingFog={selectedCoolingFog} />
 		</Stack>
 	);
 }
