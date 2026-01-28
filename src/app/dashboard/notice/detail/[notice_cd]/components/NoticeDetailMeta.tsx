@@ -1,15 +1,8 @@
 'use client';
 
-import { Box, Chip, Paper, Stack, Typography } from '@mui/material';
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import type { NoticeType } from "@/types/notice/notice";
-
-const noticeTypeStyles: Record<NoticeType, { bg: string; fg: string }> = {
-	공지: { bg: "#17AACF", fg: "#ffffff" },
-	업데이트: { bg: "#318CE8", fg: "#ffffff" },
-	점검: { bg: "#EDF1F3", fg: "#1f2933" },
-	이벤트: { bg: "#F59F0A", fg: "#ffffff" },
-};
+import { Box, Chip, Paper, Stack, Typography } from '@mui/material';
+import { NoticeType, noticeTypeStyles } from "@/types/notice/notice";
 
 interface NoticeDetailProps {
 	create_at: string;

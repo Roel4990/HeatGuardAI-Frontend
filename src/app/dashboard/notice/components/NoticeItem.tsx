@@ -1,17 +1,11 @@
 'use client';
 
-import { Box, Chip, Paper, Typography } from "@mui/material";
-import type { NoticeType } from "@/types/notice/notice";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useRouter } from "next/navigation";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { Box, Chip, Paper, Typography } from "@mui/material";
+import { NoticeType, noticeTypeStyles } from "@/types/notice/notice";
 import { paths } from "@/paths";
 
-const noticeTypeStyles: Record<NoticeType, { bg: string; fg: string }> = {
-	공지: { bg: "#17AACF", fg: "#ffffff" },
-	업데이트: { bg: "#318CE8", fg: "#ffffff" },
-	점검: { bg: "#EDF1F3", fg: "#1f2933" },
-	이벤트: { bg: "#F59F0A", fg: "#ffffff" },
-};
 
 interface NoticeItemProps {
 	noticeCd: string;
