@@ -142,8 +142,8 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						환경 정보
 					</Typography>
 					<Box sx={{ mt: 2, display: 'grid', gap: 2 }}>
-						<DetailRow label="선택위치 온도" value={`${fog.cf_selected_temp}C`} />
-						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}C`} />
+						<DetailRow label="선택 위치 온도" value={`${fog.cf_selected_temp}°C`} />
+						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}°C`} />
 						<DetailRow label="습도" value={`${fog.cf_hum_per}%`} />
 					</Box>
 				</Box>
@@ -186,7 +186,7 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 2 }}>
 				<Box sx={{ px: 4, py: 3 }}>
 					<Typography variant="h6" sx={{ fontWeight: 700 }}>
-						냉방성능분석
+						냉방 성능 분석
 					</Typography>
 
 					<Box sx={{ mt: 3 }}>
@@ -211,7 +211,7 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 									<Line
 										type="monotone"
 										dataKey="selectedTemp"
-										name="선택위치 온도"
+										name="선택 위치 온도"
 										stroke="#2563eb"
 										strokeWidth={2}
 										dot={false}
@@ -244,7 +244,3 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 		</Box>
 	);
 }
-
-
-
-
