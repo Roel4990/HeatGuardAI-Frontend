@@ -1,24 +1,29 @@
-"use client";
+﻿"use client";
 
 import * as React from 'react';
 import Script from 'next/script';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { coolingFogs, type CoolingFogData } from '@/dummydata/cooling-fogs';
+import type { CoolingFogListItem } from '@/types/realTimeControl/real-time-control';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NaverMap = any;
 
 type RealTimeMapProps = {
-	onSelectCoolingFog: (fog: CoolingFogData) => void;
+	coolingFogList: CoolingFogListItem[];
+	onSelectCoolingFog: (fogId: string) => void;
 };
 
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
 
-export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
+export function RealTimeMap({
+	coolingFogList,
+	onSelectCoolingFog,
+}: RealTimeMapProps): React.JSX.Element {
 	const mapContainerRef = React.useRef<HTMLDivElement | null>(null);
 	const mapRef = React.useRef<NaverMap | null>(null);
+	const markersRef = React.useRef<NaverMap[]>([]);
 	const [isScriptReady, setIsScriptReady] = React.useState(false);
 
 	const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
@@ -36,20 +41,33 @@ export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX
 			zoom: 13,
 		});
 
-		// Marker click -> notify parent to update the info panel.
-		for (const fog of coolingFogs) {
+		mapRef.current = map;
+	}, [isScriptReady]);
+
+	React.useEffect(() => {
+		const map = mapRef.current;
+		if (!isScriptReady || !map) return;
+    // eslint-disable-next-line unicorn/prefer-global-this
+		const naver = window.naver;
+		if (!naver?.maps) return;
+
+		for (const marker of markersRef.current) {
+			marker.setMap(null);
+		}
+		markersRef.current = [];
+
+		for (const fog of coolingFogList) {
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(fog.lat, fog.lng),
 				map,
 			});
 
 			naver.maps.Event.addListener(marker, 'click', () => {
-				onSelectCoolingFog(fog);
+				onSelectCoolingFog(fog.cf_cd);
 			});
+			markersRef.current.push(marker);
 		}
-
-		mapRef.current = map;
-	}, [isScriptReady, onSelectCoolingFog]);
+	}, [coolingFogList, isScriptReady, onSelectCoolingFog]);
 
 	return (
 		<div style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -84,3 +102,4 @@ export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX
 		</div>
 	);
 }
+

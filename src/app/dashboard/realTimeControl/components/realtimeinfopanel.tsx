@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -16,10 +16,10 @@ import {
 	YAxis,
 } from 'recharts';
 
-import type { CoolingFogData } from '@/dummydata/cooling-fogs';
+import type { CoolingFogDetailData } from '@/types/realTimeControl/real-time-control';
 
 type RealTimeInfoPanelProps = {
-	selectedCoolingFog: CoolingFogData | null;
+	selectedCoolingFog: CoolingFogDetailData | null;
 };
 
 type DetailRowProps = {
@@ -62,10 +62,10 @@ function PlaceholderState(): React.JSX.Element {
 					sx={{ width: 80, height: 90, mx: 'auto', mb: 5 }}
 				/>
 				<Typography variant="h6" sx={{ fontWeight: 700 }}>
-					선택된 쿨링포그 위치가 없습니다.
+					선택한 쿨링포그 위치가 없습니다.
 				</Typography>
 				<Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-					조회하고 싶은 쿨링포그 위치를 지도에서 선택해주세요
+					조회하고 싶은 쿨링포그 위치를 지도에서 선택해주세요.
 				</Typography>
 			</Box>
 		</Box>
@@ -73,7 +73,7 @@ function PlaceholderState(): React.JSX.Element {
 }
 
 type DetailStateProps = {
-	fog: CoolingFogData;
+	fog: CoolingFogDetailData;
 };
 
 function DetailState({ fog }: DetailStateProps): React.JSX.Element {
@@ -117,15 +117,15 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						운영 및 담당자 정보
 					</Typography>
 					<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-						<Chip label={fog.cf_state ? '운영중' : '중지'} color={fog.cf_state ? 'success' : 'error'} variant="filled" />
+						<Chip label={fog.cf_state ? "운영중" : "중지"} color={fog.cf_state ? "success" : "error"} variant="filled" />
 						<Typography variant="body2" color="text.secondary">
-							설치날짜 {fog.cf_inst_date || '-'}
+							설치일 {fog.cf_inst_date || '-'}
 						</Typography>
 					</Box>
 					<Box sx={{ mt: 2 }}>
-						<DetailRow label="소속" value={fog.cf_manager_dept} />
-						<DetailRow label="이름" value={fog.cf_manager_nm} />
-						<DetailRow label="전화번호" value={fog.cf_manager_contact} />
+						<DetailRow label="부서" value={fog.cf_manage_dept} />
+						<DetailRow label="담당자" value={fog.cf_manager_nm} />
+						<DetailRow label="연락처" value={fog.cf_manager_contact} />
 					</Box>
 				</Box>
 				<Box
@@ -142,8 +142,8 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						환경 정보
 					</Typography>
 					<Box sx={{ mt: 2, display: 'grid', gap: 2 }}>
-						<DetailRow label="선택 위치 온도" value={`${(fog.cf_nearby_temp * 0.9).toFixed(1)}°C`} />
-						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}°C`} />
+						<DetailRow label="선택위치 온도" value={`${fog.cf_selected_temp}C`} />
+						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}C`} />
 						<DetailRow label="습도" value={`${fog.cf_hum_per}%`} />
 					</Box>
 				</Box>
@@ -157,14 +157,16 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 		if (!selectedCoolingFog) {
 			return [];
 		}
-		// TODO: Replace this dummy series mapping with real API history data.
-		return Object.entries(selectedCoolingFog.time)
-			.map(([time, values]) => ({
+		const timeSlots = ['00:00', '06:00', '12:00', '18:00'];
+		return timeSlots.map((time) => {
+			const values = selectedCoolingFog.time[time];
+			return {
 				time,
-				selectedTemp: values.cf_selected_temp,
-				nearbyTemp: values.cf_nearby_temp,
-			}))
-			.sort((a, b) => a.time.localeCompare(b.time));
+				selectedTemp: values?.cf_selected_temp ?? null,
+				nearbyTemp: values?.cf_nearby_temp ?? null,
+				humPer: values?.cf_hum_per ?? null,
+			};
+		});
 	}, [selectedCoolingFog]);
 
 	if (!selectedCoolingFog) {
@@ -176,7 +178,7 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 	}
 
 	return (
-		<Box className="space-y-6">
+		<Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
 				<DetailState fog={selectedCoolingFog} />
 			</Card>
@@ -184,8 +186,9 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 2 }}>
 				<Box sx={{ px: 4, py: 3 }}>
 					<Typography variant="h6" sx={{ fontWeight: 700 }}>
-						냉방 성능 분석 (가동 기록, 24시간)
+						냉방성능분석
 					</Typography>
+
 					<Box sx={{ mt: 3 }}>
 						<Box
 							sx={{
@@ -198,21 +201,21 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 								p: 2,
 							}}
 						>
-							{/* TODO: Replace with a real chart configuration and server-driven data. */}
 							<ResponsiveContainer width="100%" height="100%">
 								<LineChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="time" />
-									<YAxis />
+									<YAxis domain={[0, 100]} />
 									<Tooltip />
 									<Legend verticalAlign="top" height={24} />
 									<Line
 										type="monotone"
 										dataKey="selectedTemp"
-										name="선택 위치 온도"
+										name="선택위치 온도"
 										stroke="#2563eb"
 										strokeWidth={2}
 										dot={false}
+										connectNulls
 									/>
 									<Line
 										type="monotone"
@@ -221,6 +224,16 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 										stroke="#f97316"
 										strokeWidth={2}
 										dot={false}
+										connectNulls
+									/>
+									<Line
+										type="monotone"
+										dataKey="humPer"
+										name="습도"
+										stroke="#38bdf8"
+										strokeWidth={2}
+										dot={false}
+										connectNulls
 									/>
 								</LineChart>
 							</ResponsiveContainer>
@@ -231,3 +244,7 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 		</Box>
 	);
 }
+
+
+
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -7,11 +7,25 @@ import Typography from '@mui/material/Typography';
 
 import { RealTimeInfoPanel } from './realtimeinfopanel';
 import { RealTimeMap } from './realtimemap';
-import type { CoolingFogData } from '@/dummydata/cooling-fogs';
+import { useCoolingFogDetailMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-detail-query';
+import { useCoolingFogListMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-list-query';
 
 export function RealTimeControlLayout(): React.JSX.Element {
-	// Selected marker state lives here and is passed down to children.
-	const [selectedCoolingFog, setSelectedCoolingFog] = React.useState<CoolingFogData | null>(null);
+	const { mutate: fetchCoolingFogList, data: listData } = useCoolingFogListMutation();
+	const detailMutation = useCoolingFogDetailMutation();
+	const coolingFogList = listData?.data?.cfList ?? [];
+	const selectedCoolingFog = detailMutation.data?.data ?? null;
+
+	const handleSelectCoolingFog = React.useCallback(
+		(fogId: string) => {
+			detailMutation.mutate(fogId);
+		},
+		[detailMutation]
+	);
+
+	React.useEffect(() => {
+		fetchCoolingFogList();
+	}, [fetchCoolingFogList]);
 
 	return (
 		<Stack
@@ -43,9 +57,15 @@ export function RealTimeControlLayout(): React.JSX.Element {
 					boxShadow: 1,
 				}}
 			>
-				<RealTimeMap onSelectCoolingFog={setSelectedCoolingFog} />
+				<RealTimeMap
+					coolingFogList={coolingFogList}
+					onSelectCoolingFog={handleSelectCoolingFog}
+				/>
 			</Box>
 			<RealTimeInfoPanel selectedCoolingFog={selectedCoolingFog} />
 		</Stack>
 	);
 }
+
+
+
