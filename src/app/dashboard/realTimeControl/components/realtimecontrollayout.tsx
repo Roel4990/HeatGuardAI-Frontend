@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { RealTimeInfoPanel } from './realtimeinfopanel';
 import { RealTimeMap } from './realtimemap';
-import type { CoolingFogData } from '@/dummydata/coolingFogs';
+import type { CoolingFogData } from '@/dummydata/cooling-fogs';
 
 export function RealTimeControlLayout(): React.JSX.Element {
 	// Selected marker state lives here and is passed down to children.

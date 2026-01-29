@@ -4,7 +4,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import {
 	CartesianGrid,
@@ -17,7 +16,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import type { CoolingFogData } from '@/dummydata/coolingFogs';
+import type { CoolingFogData } from '@/dummydata/cooling-fogs';
 
 type RealTimeInfoPanelProps = {
 	selectedCoolingFog: CoolingFogData | null;
@@ -154,15 +153,10 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 }
 
 export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps): React.JSX.Element {
-	if (!selectedCoolingFog) {
-		return (
-			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
-				<PlaceholderState />
-			</Card>
-		);
-	}
-
 	const chartData = React.useMemo(() => {
+		if (!selectedCoolingFog) {
+			return [];
+		}
 		// TODO: Replace this dummy series mapping with real API history data.
 		return Object.entries(selectedCoolingFog.time)
 			.map(([time, values]) => ({
@@ -171,7 +165,15 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 				nearbyTemp: values.cf_nearby_temp,
 			}))
 			.sort((a, b) => a.time.localeCompare(b.time));
-	}, [selectedCoolingFog.time]);
+	}, [selectedCoolingFog]);
+
+	if (!selectedCoolingFog) {
+		return (
+			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
+				<PlaceholderState />
+			</Card>
+		);
+	}
 
 	return (
 		<Box className="space-y-6">

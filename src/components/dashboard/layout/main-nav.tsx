@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { DUMMY_NOTICES } from "@/app/dashboard/data/notificationData";
+import { DUMMY_NOTICES } from "@/app/dashboard/data/notification-data";
 import { Divider, List, ListItemButton, Popover, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";

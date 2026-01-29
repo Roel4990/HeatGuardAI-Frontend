@@ -1,9 +1,9 @@
-import { Chip, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Chip, Table, TableBody, TableCell, TableHead, TableRow, type SxProps } from '@mui/material';
 import { RiskLevel } from "@/types/dashboard/dashboard";
 import { DashboardSectionCard } from "./DashboardSectionCard";
-import { HEAT_RISK_ROWS } from "@/app/dashboard/data/heatRiskRank";
+import { HEAT_RISK_ROWS } from "@/app/dashboard/data/heat-risk-rank";
 
-const RISK_CHIP_STYLES: Record<RiskLevel, { label: string; color: 'error' | 'warning' | 'default'; sx?: any }> = {
+const RISK_CHIP_STYLES: Record<RiskLevel, { label: string; color: 'error' | 'warning' | 'default'; sx?: SxProps }> = {
 	위험: {
 		label: '위험',
 		color: 'error',

@@ -10,9 +10,9 @@ import Typography from '@mui/material/Typography';
 
 import type { RecoLocItem } from '../../types/reco';
 
-export default function ResultCard({ item }: { item: RecoLocItem }): React.JSX.Element {
-  const formatNumber = (n: number) => n.toLocaleString('ko-KR');
+const formatNumber = (n: number) => n.toLocaleString('ko-KR');
 
+export default function ResultCard({ item }: { item: RecoLocItem }): React.JSX.Element {
   return (
     <Card sx={{ borderRadius: 2, border: '1px solid #eee', overflow: 'hidden' }}>
       <CardContent sx={{ p: 2.5 }}>
@@ -79,17 +79,19 @@ export default function ResultCard({ item }: { item: RecoLocItem }): React.JSX.E
           </Typography>
 
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {(item.reco_loc_desc && item.reco_loc_desc.length ? item.reco_loc_desc : ['추천 사유 데이터가 없습니다'])
-              .map((text) => (
-                <Typography
-                  key={text}
-                  component="li"
-                  variant="body2"
-                  sx={{ mb: 0.5, color: 'text.primary', fontWeight: 600 }}
-                >
-                  {text}
-                </Typography>
-              ))}
+            {(item.reco_loc_desc && item.reco_loc_desc.length > 0
+              ? item.reco_loc_desc
+              : ['추천 사유 데이터가 없습니다']
+            ).map((text) => (
+              <Typography
+                key={text}
+                component="li"
+                variant="body2"
+                sx={{ mb: 0.5, color: 'text.primary', fontWeight: 600 }}
+              >
+                {text}
+              </Typography>
+            ))}
           </Box>
         </Box>
       </CardContent>

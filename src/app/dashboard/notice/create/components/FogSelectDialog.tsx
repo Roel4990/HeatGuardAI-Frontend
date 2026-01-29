@@ -10,7 +10,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { FOG_AREAS } from "@/app/dashboard/notice/create/data/fogData";
+import { FOG_AREAS } from "@/app/dashboard/notice/create/data/fog-data";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from '@mui/icons-material/Close';

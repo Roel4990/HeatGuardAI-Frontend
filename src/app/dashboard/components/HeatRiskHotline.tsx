@@ -5,7 +5,7 @@ import { DISTRICTS, getDongsByDistrict } from "@/app/dashboard/data/selectors";
 import { Box, Divider, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 import { DashboardSectionCard } from "./DashboardSectionCard";
-import { HOTLINE_CONTACTS } from "@/app/dashboard/data/hotlineData";
+import { HOTLINE_CONTACTS } from "@/app/dashboard/data/hotline-data";
 
 
 export function HeatRiskHotline() {

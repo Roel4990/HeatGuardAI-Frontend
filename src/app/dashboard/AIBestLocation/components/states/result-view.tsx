@@ -40,7 +40,7 @@ export default function ResultView({
         <StateCard label="분석 지역 범위 📉" value={data.data!.result_address} />
         <StateCard label="우선순위 🏆" value={priorityText(request.reco_loc_type_cd)} />
         <StateCard label="가능 추천 위치 수 🌐" value={data.data!.result_count} unit="개소" />
-        <StateCard label="예상 보호 인원 👨‍👦‍👦" value={25345} unit="명" />
+        <StateCard label="예상 보호 인원 👨‍👦‍👦" value={25_345} unit="명" />
       </Box>
 
       {/* 지도 */}

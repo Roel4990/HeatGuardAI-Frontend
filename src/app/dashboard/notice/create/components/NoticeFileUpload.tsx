@@ -6,7 +6,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
+const ACCEPTED_TYPES = new Set(['image/png', 'image/jpeg', 'application/pdf']);
 
 export function NoticeFileUpload() {
 	const inputRef = useRef<HTMLInputElement | null>(null);
@@ -16,7 +16,7 @@ export function NoticeFileUpload() {
 	const handleFile = (newFile: File | null) => {
 		if (!newFile) return;
 
-		if (!ACCEPTED_TYPES.includes(newFile.type)) {
+		if (!ACCEPTED_TYPES.has(newFile.type)) {
 			alert('PNG, JPG, PDF 파일만 업로드할 수 있습니다.');
 			return;
 		}
