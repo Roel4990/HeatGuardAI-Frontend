@@ -7,8 +7,6 @@ import Box from "@mui/material/Box";
 import { NoticeCreateHeader } from "@/app/dashboard/notice/create/components/NoticeCreateHeader";
 import { Paper } from "@mui/material";
 
-
-
 export default function Page(): React.JSX.Element {
   return (
 		<Box sx={{ minHeight: '100vh'}}>

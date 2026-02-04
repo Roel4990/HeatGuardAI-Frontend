@@ -9,7 +9,7 @@ import { NoticeList } from "@/app/dashboard/notice/components/NoticeList";
 
 export default function NoticePage() {
 	return (
-		<Container maxWidth="md" sx={{ py: 4 }}>
+		<Container maxWidth="lg" sx={{ py: 4 }}>
 			<NoticeHeader />
 			<Box mt={3}>
 				<NoticeSearchBar />
