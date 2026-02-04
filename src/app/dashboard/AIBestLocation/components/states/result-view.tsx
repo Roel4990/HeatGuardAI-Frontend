@@ -4,7 +4,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import type { RecoApiResponse, RecoRequestBody } from '../../types/reco';
+import type { RecoApiResponse, RecoRequestBody } from '../../../../../types/AIBestLocation/reco';
 
 import StateCard from '../card/state-card';
 import ResultCard from '../card/result-card';

@@ -4,7 +4,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
-import type { RecoApiResponse, RecoRequestBody } from '../../types/reco';
+import type { RecoApiResponse, RecoRequestBody } from '../../../../../types/AIBestLocation/reco';
 
 import IdleState from '../states/idle-state';
 import LoadingOverlay from '../states/loading-overlay';
