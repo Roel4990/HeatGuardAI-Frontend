@@ -20,6 +20,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+	Container
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -27,7 +28,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import type { FogItem } from "@/types/budgetSimulation/coolingfog";
 import { FOG_ITEMS } from "@/app/dashboard/data/budgetSimulation/coolingfog-items";
 import AIDocumentsPanel from "@/app/dashboard/budgetSimulation/components/ai-documents-panel";
-
+import { BudgetSimulationHeader } from "@/app/dashboard/budgetSimulation/components/budget-simulation-header";
 const MAX_BUDGET = 999_900_000_000; // 9999억
 const MAX_QTY = 99;
 const STICKY_TOP = "calc(var(--app-header-h, 72px) + 16px)";
@@ -246,366 +247,361 @@ export default function CoolingFogBudgetPage() {
   };
 
   return (
-    <Stack spacing={3}>
-      {/* Header */}
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
-          예산 시뮬레이션
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75, lineHeight: 1.7, maxWidth: 820 }}>
-          품목을 선택(카드 클릭 또는 설치개수 입력)하고 운영기간/가용예산을 입력하면 예산 사용률과 남은 금액을 확인할 수 있습니다.
-        </Typography>
-      </Box>
+		<Container maxWidth="xl" sx={{ py: 4 }}>
+			<Stack spacing={3}>
+				{/* Header */}
+				<BudgetSimulationHeader />
 
-      {/* 2 Column */}
-      <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="flex-start">
-        {/* Left: Items */}
-        <Box sx={{ flex: 1, width: "100%", minWidth: 0 }}>
-          <Box
-            sx={{
-              display: "grid",
-              gap: 1.5,
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
-              alignItems: "stretch",
-            }}
-          >
-            {items.map((it) => {
-              const isSelected = selectedCodes.has(it.code);
+				{/* 2 Column */}
+				<Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="flex-start">
+					{/* Left: Items */}
+					<Box sx={{ flex: 1, width: "100%", minWidth: 0 }}>
+						<Box
+							sx={{
+								display: "grid",
+								gap: 1.5,
+								gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+								alignItems: "stretch",
+							}}
+						>
+							{items.map((it) => {
+								const isSelected = selectedCodes.has(it.code);
 
-              const initCost = it.unitPrice * it.qty;
-              const annualUnit = it.elecMonthly * 12 + it.waterMonthly * 12;
-              const annualCost = annualUnit * it.qty;
+								const initCost = it.unitPrice * it.qty;
+								const annualUnit = it.elecMonthly * 12 + it.waterMonthly * 12;
+								const annualCost = annualUnit * it.qty;
 
-              return (
-                <Paper
-                  key={it.code}
-                  elevation={0}
-                  onClick={() => toggleSelect(it.code)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      toggleSelect(it.code);
-                    }
-                  }}
-                  sx={{
-                    cursor: "pointer",
-                    borderRadius: UI_BORDER_RADIUS,
-                    border: "1.5px solid",
-                    borderColor: isSelected ? "primary.main" : "divider",
-                    bgcolor: isSelected ? UI_BG_ITEM_CARD_SELECTED : UI_BG_ITEM_CARD,
-                    boxShadow: isSelected ? 2 : 0,
-                    overflow: "hidden",
-                    transition: "all 160ms ease",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    "&:hover": { boxShadow: 4 },
-                  }}
-                >
-                  {/* Code / Selected */}
-                  <Box sx={{ px: 2, pt: 2, pb: 1.25 }}>
-                    <RowBetween>
-                      <Chip size="small" label={it.code} variant="outlined" sx={{ ...UI_CODE_CHIP_SX, ...UI_CHIP_NOCLICK_SX }} />
-                      {isSelected ? (
-                        <Chip size="small" color="primary" label="선택됨" sx={{ height: 24, ...UI_CHIP_NOCLICK_SX }} />
-                      ) : (
-                        <Chip size="small" variant="outlined" label="미선택" sx={{ height: 24, ...UI_CHIP_NOCLICK_SX }} />
-                      )}
-                    </RowBetween>
-                  </Box>
+								return (
+									<Paper
+										key={it.code}
+										elevation={0}
+										onClick={() => toggleSelect(it.code)}
+										role="button"
+										tabIndex={0}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
+												toggleSelect(it.code);
+											}
+										}}
+										sx={{
+											cursor: "pointer",
+											borderRadius: UI_BORDER_RADIUS,
+											border: "1.5px solid",
+											borderColor: isSelected ? "primary.main" : "divider",
+											bgcolor: isSelected ? UI_BG_ITEM_CARD_SELECTED : UI_BG_ITEM_CARD,
+											boxShadow: isSelected ? 2 : 0,
+											overflow: "hidden",
+											transition: "all 160ms ease",
+											height: "100%",
+											display: "flex",
+											flexDirection: "column",
+											"&:hover": { boxShadow: 4 },
+										}}
+									>
+										{/* Code / Selected */}
+										<Box sx={{ px: 2, pt: 2, pb: 1.25 }}>
+											<RowBetween>
+												<Chip size="small" label={it.code} variant="outlined" sx={{ ...UI_CODE_CHIP_SX, ...UI_CHIP_NOCLICK_SX }} />
+												{isSelected ? (
+													<Chip size="small" color="primary" label="선택됨" sx={{ height: 24, ...UI_CHIP_NOCLICK_SX }} />
+												) : (
+													<Chip size="small" variant="outlined" label="미선택" sx={{ height: 24, ...UI_CHIP_NOCLICK_SX }} />
+												)}
+											</RowBetween>
+										</Box>
 
-                  {/* Image */}
-                  <Box sx={{ px: 2, pb: 1.5 }}>
-                    <Box
-                      sx={{
-                        height: 190,
-                        width: "100%",
-                        borderRadius: UI_IMAGE_RADIUS,
-                        overflow: "hidden",
-                        border: "1px solid",
-                        borderColor: "divider",
-                        bgcolor: "background.paper",
-                        "&:hover img": {
-                          transform: "scale(1.06)",
-                        },
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={it.imgUrl}
-                        alt={it.name}
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                          transform: "scale(1)",
-                          transition: "transform 180ms ease",
-                          transformOrigin: "center",
-                        }}
-                      />
-                    </Box>
-                  </Box>
+										{/* Image */}
+										<Box sx={{ px: 2, pb: 1.5 }}>
+											<Box
+												sx={{
+													height: 190,
+													width: "100%",
+													borderRadius: UI_IMAGE_RADIUS,
+													overflow: "hidden",
+													border: "1px solid",
+													borderColor: "divider",
+													bgcolor: "background.paper",
+													"&:hover img": {
+														transform: "scale(1.06)",
+													},
+												}}
+											>
+												<Box
+													component="img"
+													src={it.imgUrl}
+													alt={it.name}
+													sx={{
+														width: "100%",
+														height: "100%",
+														objectFit: "cover",
+														display: "block",
+														transform: "scale(1)",
+														transition: "transform 180ms ease",
+														transformOrigin: "center",
+													}}
+												/>
+											</Box>
+										</Box>
 
-                  {/* Content */}
-                  <Box sx={{ px: 2, pb: 2.25, flex: 1, display: "flex", flexDirection: "column" }}>
-                    <Stack spacing={1.1} sx={{ flex: 1 }}>
-                      <Box sx={{ minWidth: 0 }}>
-                        <Typography fontWeight={900} sx={{ lineHeight: 1.2 }}>
-                          {it.name}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35 }}>
-                          추천 설치: {it.loc}
-                        </Typography>
-                      </Box>
+										{/* Content */}
+										<Box sx={{ px: 2, pb: 2.25, flex: 1, display: "flex", flexDirection: "column" }}>
+											<Stack spacing={1.1} sx={{ flex: 1 }}>
+												<Box sx={{ minWidth: 0 }}>
+													<Typography fontWeight={900} sx={{ lineHeight: 1.2 }}>
+														{it.name}
+													</Typography>
+													<Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35 }}>
+														추천 설치: {it.loc}
+													</Typography>
+												</Box>
 
-                      <RowBetween>
-                        <CostBox label="A  초기 설치비" total={initCost} unitLine={`단가 ${formatKRW(it.unitPrice)}`} />
-                        <CostBox label="B  연간 운영비" total={annualCost} unitLine={`개당 ${formatKRW(annualUnit)}`} />
-                      </RowBetween>
+												<RowBetween>
+													<CostBox label="A  초기 설치비" total={initCost} unitLine={`단가 ${formatKRW(it.unitPrice)}`} />
+													<CostBox label="B  연간 운영비" total={annualCost} unitLine={`개당 ${formatKRW(annualUnit)}`} />
+												</RowBetween>
 
-                      <Divider sx={{ mt: 0.5 }} />
+												<Divider sx={{ mt: 0.5 }} />
 
-                      <RowBetween>
-                        <Stack direction="row" spacing={1} alignItems="center" onClick={stopClick} onKeyDown={stopKeyDown}>
-                          <IconButton
-                            size="small"
-                            onClick={() => incQty(it.code, -1)}
-                            disabled={it.qty <= 0}
-                            aria-label="설치개수 감소"
-                            sx={{
-                              border: "1px solid",
-                              borderColor: "divider",
-                              borderRadius: 1,
-                              width: 32,
-                              height: 32,
-                              bgcolor: "background.paper",
-                            }}
-                          >
-                            <Typography sx={{ fontWeight: 700, lineHeight: 1 }}>−</Typography>
-                          </IconButton>
+												<RowBetween>
+													<Stack direction="row" spacing={1} alignItems="center" onClick={stopClick} onKeyDown={stopKeyDown}>
+														<IconButton
+															size="small"
+															onClick={() => incQty(it.code, -1)}
+															disabled={it.qty <= 0}
+															aria-label="설치개수 감소"
+															sx={{
+																border: "1px solid",
+																borderColor: "divider",
+																borderRadius: 1,
+																width: 32,
+																height: 32,
+																bgcolor: "background.paper",
+															}}
+														>
+															<Typography sx={{ fontWeight: 700, lineHeight: 1 }}>−</Typography>
+														</IconButton>
 
-                          <TextField
-                            size="small"
-                            type="text"
-                            inputMode="numeric"
-                            value={String(it.qty)}
-                            onClick={stopClick}
-                            onChange={(e) => handleQty(it.code, normalizeQtyText(e.target.value))}
-                            sx={{ width: 72, bgcolor: "background.paper" }}
-                            // ✅ TS6385: inputProps deprecated → slotProps.htmlInput 사용(MUI v6+)
-                            slotProps={{
-                              htmlInput: {
-                                style: { textAlign: "center", fontWeight: 700, paddingLeft: 4, paddingRight: 4 },
-                                "aria-label": "설치개수 입력",
-                              },
-                            }}
-                          />
+														<TextField
+															size="small"
+															type="text"
+															inputMode="numeric"
+															value={String(it.qty)}
+															onClick={stopClick}
+															onChange={(e) => handleQty(it.code, normalizeQtyText(e.target.value))}
+															sx={{ width: 72, bgcolor: "background.paper" }}
+															// ✅ TS6385: inputProps deprecated → slotProps.htmlInput 사용(MUI v6+)
+															slotProps={{
+																htmlInput: {
+																	style: { textAlign: "center", fontWeight: 700, paddingLeft: 4, paddingRight: 4 },
+																	"aria-label": "설치개수 입력",
+																},
+															}}
+														/>
 
-                          <IconButton
-                            size="small"
-                            onClick={() => incQty(it.code, +1)}
-                            disabled={it.qty >= MAX_QTY}
-                            aria-label="설치개수 증가"
-                            sx={{
-                              border: "1px solid",
-                              borderColor: "divider",
-                              borderRadius: 1,
-                              width: 32,
-                              height: 32,
-                              bgcolor: "background.paper",
-                            }}
-                          >
-                            <Typography sx={{ fontWeight: 900, lineHeight: 1 }}>+</Typography>
-                          </IconButton>
-                        </Stack>
+														<IconButton
+															size="small"
+															onClick={() => incQty(it.code, +1)}
+															disabled={it.qty >= MAX_QTY}
+															aria-label="설치개수 증가"
+															sx={{
+																border: "1px solid",
+																borderColor: "divider",
+																borderRadius: 1,
+																width: 32,
+																height: 32,
+																bgcolor: "background.paper",
+															}}
+														>
+															<Typography sx={{ fontWeight: 900, lineHeight: 1 }}>+</Typography>
+														</IconButton>
+													</Stack>
 
-                        {it.link ? (
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            endIcon={<OpenInNewIcon fontSize="small" />}
-                            href={it.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            구매 링크
-                          </Button>
-                        ) : (
-                          <Button size="small" variant="outlined" disabled onClick={(e) => e.stopPropagation()}>
-                            링크 준비중
-                          </Button>
-                        )}
-                      </RowBetween>
-                    </Stack>
-                  </Box>
-                </Paper>
-              );
-            })}
-          </Box>
+													{it.link ? (
+														<Button
+															size="small"
+															variant="outlined"
+															endIcon={<OpenInNewIcon fontSize="small" />}
+															href={it.link}
+															target="_blank"
+															rel="noopener noreferrer"
+															onClick={(e) => e.stopPropagation()}
+														>
+															구매 링크
+														</Button>
+													) : (
+														<Button size="small" variant="outlined" disabled onClick={(e) => e.stopPropagation()}>
+															링크 준비중
+														</Button>
+													)}
+												</RowBetween>
+											</Stack>
+										</Box>
+									</Paper>
+								);
+							})}
+						</Box>
 
-          <Typography variant="caption" color="text.secondary" sx={{ pb: 1, mt: 1.5, display: "block" }}>
-            * 연간 운영비(B)는 (월 전기세 + 월 수도세)를 12개월로 환산하여 계산되며, 전기/수도 항목을 별도로 표시하지 않습니다.
-          </Typography>
-        </Box>
+						<Typography variant="caption" color="text.secondary" sx={{ pb: 1, mt: 1.5, display: "block" }}>
+							* 연간 운영비(B)는 (월 전기세 + 월 수도세)를 12개월로 환산하여 계산되며, 전기/수도 항목을 별도로 표시하지 않습니다.
+						</Typography>
+					</Box>
 
-        {/* Right: Sticky Sidebar */}
-        <Box
-          sx={{
-            width: { xs: "100%", md: 392 },
-            position: { md: "sticky" },
-            top: { md: STICKY_TOP },
-            flexShrink: 0,
-          }}
-        >
-          <Stack spacing={1.25}>
-            {/* Settings card */}
-            <Paper
-              elevation={0}
-              sx={{
-                borderRadius: UI_BORDER_RADIUS,
-                border: "1px solid",
-                borderColor: "divider",
-                bgcolor: UI_BG_SETTINGS_CARD,
-                p: 2,
-              }}
-            >
-              <Stack spacing={1.5}>
-                <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 900, letterSpacing: "0.08em" }}>
-                  설정
-                </Typography>
+					{/* Right: Sticky Sidebar */}
+					<Box
+						sx={{
+							width: { xs: "100%", md: 392 },
+							position: { md: "sticky" },
+							top: { md: STICKY_TOP },
+							flexShrink: 0,
+						}}
+					>
+						<Stack spacing={1.25}>
+							{/* Settings card */}
+							<Paper
+								elevation={0}
+								sx={{
+									borderRadius: UI_BORDER_RADIUS,
+									border: "1px solid",
+									borderColor: "divider",
+									bgcolor: UI_BG_SETTINGS_CARD,
+									p: 2,
+								}}
+							>
+								<Stack spacing={1.5}>
+									<Typography variant="overline" color="text.secondary" sx={{ fontWeight: 900, letterSpacing: "0.08em" }}>
+										설정
+									</Typography>
 
-                <FormControl fullWidth size="small" sx={{ background: "white" }}>
-                  <InputLabel id="years-label">운영기간</InputLabel>
-                  <Select labelId="years-label" label="운영기간" value={String(years)} onChange={handleYears}>
-                    {[1, 2, 3, 4, 5].map((y) => (
-                      <MenuItem key={y} value={String(y)}>
-                        {y}년
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+									<FormControl fullWidth size="small" sx={{ background: "white" }}>
+										<InputLabel id="years-label">운영기간</InputLabel>
+										<Select labelId="years-label" label="운영기간" value={String(years)} onChange={handleYears}>
+											{[1, 2, 3, 4, 5].map((y) => (
+												<MenuItem key={y} value={String(y)}>
+													{y}년
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
 
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="가용 예산(원)"
-                  value={budgetText}
-                  onChange={(e) => handleBudgetChange(e.target.value)}
-                  placeholder="예: 2,000,000,000"
-                  sx={{ background: "white" }}
-                  slotProps={{
-                    htmlInput: { inputMode: "numeric" },
-                    input: {
-                      startAdornment: <InputAdornment position="start">₩</InputAdornment>,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Tooltip title="최대 9999억까지 입력 가능합니다.">
-                            <IconButton size="small" edge="end">
-                              <InfoOutlinedIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
+									<TextField
+										size="small"
+										fullWidth
+										label="가용 예산(원)"
+										value={budgetText}
+										onChange={(e) => handleBudgetChange(e.target.value)}
+										placeholder="예: 2,000,000,000"
+										sx={{ background: "white" }}
+										slotProps={{
+											htmlInput: { inputMode: "numeric" },
+											input: {
+												startAdornment: <InputAdornment position="start">₩</InputAdornment>,
+												endAdornment: (
+													<InputAdornment position="end">
+														<Tooltip title="최대 9999억까지 입력 가능합니다.">
+															<IconButton size="small" edge="end">
+																<InfoOutlinedIcon fontSize="small" />
+															</IconButton>
+														</Tooltip>
+													</InputAdornment>
+												),
+											},
+										}}
+									/>
 
 
-                <Typography variant="caption" color="text.secondary">
-                  가용 예산을 입력하면 사용률/남은 금액이 표시됩니다.
-                </Typography>
-              </Stack>
-            </Paper>
+									<Typography variant="caption" color="text.secondary">
+										가용 예산을 입력하면 사용률/남은 금액이 표시됩니다.
+									</Typography>
+								</Stack>
+							</Paper>
 
-            {/* Budget Summary card */}
-            <Paper
-              elevation={0}
-              sx={{
-                borderRadius: UI_BORDER_RADIUS,
-                border: "1px solid",
-                borderColor: "divider",
-                bgcolor: UI_BG_SUMMARY_CARD,
-                p: 3,
-              }}
-            >
-              <Stack spacing={1.25}>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 900, letterSpacing: "-0.01em" }}>
-                    예산 요약
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25 }}>
-                    선택된 품목 기준으로 합계를 계산합니다.
-                  </Typography>
-                </Box>
+							{/* Budget Summary card */}
+							<Paper
+								elevation={0}
+								sx={{
+									borderRadius: UI_BORDER_RADIUS,
+									border: "1px solid",
+									borderColor: "divider",
+									bgcolor: UI_BG_SUMMARY_CARD,
+									p: 3,
+								}}
+							>
+								<Stack spacing={1.25}>
+									<Box sx={{ minWidth: 0 }}>
+										<Typography variant="subtitle2" sx={{ fontWeight: 900, letterSpacing: "-0.01em" }}>
+											예산 요약
+										</Typography>
+										<Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25 }}>
+											선택된 품목 기준으로 합계를 계산합니다.
+										</Typography>
+									</Box>
 
-                <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                  <Chip size="small" color="warning" label={`운영기간 ${years}년`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
-                  <Chip size="small" color="primary" label={`선택 품목 ${selectedItemCount}개`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
-                  <Chip size="small" color="info" label={`총 설치 ${totalQty}개`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
-                </Stack>
+									<Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+										<Chip size="small" color="warning" label={`운영기간 ${years}년`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
+										<Chip size="small" color="primary" label={`선택 품목 ${selectedItemCount}개`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
+										<Chip size="small" color="info" label={`총 설치 ${totalQty}개`} sx={{ height: 26, ...UI_CHIP_NOCLICK_SX }} />
+									</Stack>
 
-                <Stack spacing={0.75}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="caption" color="text.secondary">
-                      예산 사용율(%)
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 900 }} color={status === "over" ? "error.main" : "text.primary"}>
-                      {budget > 0 ? `${usagePct.toFixed(1)}%` : "예산 미입력"}
-                    </Typography>
-                  </Stack>
+									<Stack spacing={0.75}>
+										<Stack direction="row" justifyContent="space-between" alignItems="center">
+											<Typography variant="caption" color="text.secondary">
+												예산 사용율(%)
+											</Typography>
+											<Typography variant="caption" sx={{ fontWeight: 900 }} color={status === "over" ? "error.main" : "text.primary"}>
+												{budget > 0 ? `${usagePct.toFixed(1)}%` : "예산 미입력"}
+											</Typography>
+										</Stack>
 
-                  <LinearProgress
-                    variant="determinate"
-                    value={budget > 0 ? progressPct : 0}
-                    color={status === "over" ? "error" : "success"}
-                    sx={{
-                      height: 10,
-                      borderRadius: 999,
-                    }}
-                  />
+										<LinearProgress
+											variant="determinate"
+											value={budget > 0 ? progressPct : 0}
+											color={status === "over" ? "error" : "success"}
+											sx={{
+												height: 10,
+												borderRadius: 999,
+											}}
+										/>
 
-                  <Typography
-                    variant="caption"
-                    sx={{ fontWeight: 900, textAlign: "end" }}
-                    color={status === "over" ? "error.main" : "text.primary"}
-                  >
-                    {budget <= 0 ? "가용 예산을 입력하세요." : over ? `부족 ${formatKRW(Math.abs(remain))}` : `잔액 ${formatKRW(remain)}`}
-                  </Typography>
-                </Stack>
+										<Typography
+											variant="caption"
+											sx={{ fontWeight: 900, textAlign: "end" }}
+											color={status === "over" ? "error.main" : "text.primary"}
+										>
+											{budget <= 0 ? "가용 예산을 입력하세요." : over ? `부족 ${formatKRW(Math.abs(remain))}` : `잔액 ${formatKRW(remain)}`}
+										</Typography>
+									</Stack>
 
-                <Divider />
+									<Divider />
 
-                <Stack spacing={1}>
-                  <MoneyBlock label="A. 초기 설치비 합계" value={sumInit} />
-                  <Divider />
-                  <MoneyBlock label="B. 예상 연간 운영비 합계" value={sumAnnual} />
+									<Stack spacing={1}>
+										<MoneyBlock label="A. 초기 설치비 합계" value={sumInit} />
+										<Divider />
+										<MoneyBlock label="B. 예상 연간 운영비 합계" value={sumAnnual} />
 
-                  <Box
-                    sx={{
-                      p: 1.8,
-                      borderRadius: 2,
-                      border: "1px solid",
-                      borderColor: "divider",
-                      bgcolor: UI_BG_SUMMARY_C_HIGHLIGHT,
-                    }}
-                  >
-                    <MoneyBlock label={`C. 운영기간 총 소요 예산(${years}년)`} value={sumTotal} emphasize />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75 }}>
-                      C = A + (B × 운영기간)
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Stack>
-            </Paper>
+										<Box
+											sx={{
+												p: 1.8,
+												borderRadius: 2,
+												border: "1px solid",
+												borderColor: "divider",
+												bgcolor: UI_BG_SUMMARY_C_HIGHLIGHT,
+											}}
+										>
+											<MoneyBlock label={`C. 운영기간 총 소요 예산(${years}년)`} value={sumTotal} emphasize />
+											<Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75 }}>
+												C = A + (B × 운영기간)
+											</Typography>
+										</Box>
+									</Stack>
+								</Stack>
+							</Paper>
 
-            <AIDocumentsPanel years={years} budget={budget} pickedItems={pickedItems} allItems={items} />
-          </Stack>
-        </Box>
-      </Stack>
-    </Stack>
+							<AIDocumentsPanel years={years} budget={budget} pickedItems={pickedItems} allItems={items} />
+						</Stack>
+					</Box>
+				</Stack>
+			</Stack>
+		</Container>
   );
 }

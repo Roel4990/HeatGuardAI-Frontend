@@ -15,14 +15,11 @@ export default function StateCard({
 }) {
   return (
     <Paper
+			variant="outlined"
       sx={{
         borderRadius: 2,
         p: 2,
-        boxShadow: 4,
         transition: (theme) => theme.transitions.create('box-shadow'),
-        '&:hover': {
-          boxShadow: 8,
-        },
       }}
     >
       <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800 }}>

@@ -34,8 +34,8 @@ export default function ResultView({
           flexShrink: 0,
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-          gap: 4,
-					mb: 2
+          gap: 3,
+					mb: 1
         }}
       >
         <StateCard label="분석 지역 범위 📉" value={data.data!.result_address} />

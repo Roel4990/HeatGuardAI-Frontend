@@ -54,7 +54,7 @@ export default function Page(): React.JSX.Element {
   };
 
   return (
-		<Container maxWidth="lg" sx={{ py: 4 }}>
+		<Container maxWidth="xl" sx={{ py: 4 }}>
 			<Stack spacing={3}>
 				<AiBestLocationHeader />
 				{/* ✅ 왼쪽 고정 + 오른쪽 스크롤 구조 */}
