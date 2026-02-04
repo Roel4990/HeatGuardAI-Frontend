@@ -53,6 +53,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
         localStorage.removeItem('user_auth');
         localStorage.removeItem('user_nm');
         localStorage.removeItem('user_email');
+				localStorage.removeItem('user_cd');
       } catch (storageError) {
         logger.error('Sign out storage error', storageError);
       }

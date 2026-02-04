@@ -31,6 +31,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
       const userName = localStorage.getItem('user_nm');
       const userEmail = localStorage.getItem('user_email');
       const userAuth = localStorage.getItem('user_auth');
+			const userCd = localStorage.getItem('user_cd')
 
       if (!accessToken) {
         setState((prev) => ({ ...prev, user: null, error: null, isLoading: false }));
@@ -43,6 +44,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
         email: userEmail ?? undefined,
         user_auth: userAuth ?? undefined,
         access_token: accessToken,
+				user_cd: userCd ?? undefined,
       };
 
       setState((prev) => ({ ...prev, user, error: null, isLoading: false }));

@@ -6,4 +6,5 @@ export interface LoginResult {
 	user_auth: UserType;
 	user_nm: string;
 	user_email: string;
+	user_cd:string;
 }

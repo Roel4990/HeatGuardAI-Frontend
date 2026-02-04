@@ -32,6 +32,7 @@ return data
                     localStorage.setItem("user_auth", data.data.user_auth);
                     localStorage.setItem("user_nm", data.data.user_nm);
                     localStorage.setItem("user_email", data.data.user_email);
+										localStorage.setItem("user_cd", data.data.user_cd);
                 } catch (storageError) {
                     console.warn("Failed to write login data to localStorage:", storageError);
                 }
