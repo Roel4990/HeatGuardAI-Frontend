@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import type { RecoApiResponse, RecoRequestBody } from './types/reco';
+import type { RecoApiResponse, RecoRequestBody } from '../../../types/AIBestLocation/reco';
 import { postReco } from './lib/api';
 
 import LeftPanel from './components/panel/left-panel';
@@ -53,7 +53,12 @@ export default function Page(): React.JSX.Element {
   return (
     <Stack spacing={3}>
       <Box>
-        <Typography variant="h4">AI 최적 위치</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
+          AI 최적 위치
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75, lineHeight: 1.7, maxWidth: 820 }}>
+          다양한 공간·환경 데이터를 종합 분석하여 쿨링 효과가 높은 최적 위치를 도출합니다.
+        </Typography>
       </Box>
 
       {/* ✅ 왼쪽 고정 + 오른쪽 스크롤 구조 */}

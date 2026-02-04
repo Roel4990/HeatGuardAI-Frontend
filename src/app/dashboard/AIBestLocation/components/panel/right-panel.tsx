@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
-import type { RecoApiResponse, RecoRequestBody } from '../../types/reco';
+import type { RecoApiResponse, RecoRequestBody } from '../../../../../types/AIBestLocation/reco';
 
 import IdleState from '../states/idle-state';
 import LoadingOverlay from '../states/loading-overlay';

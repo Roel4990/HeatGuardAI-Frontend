@@ -8,7 +8,7 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import type { RecoLocItem } from '../../types/reco';
+import type { RecoLocItem } from '../../../../../types/AIBestLocation/reco';
 
 const formatNumber = (n: number) => n.toLocaleString('ko-KR');
 

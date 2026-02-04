@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import Box from '@mui/material/Box';
 
-import type { RecoLocItem } from '../../types/reco';
+import type { RecoLocItem } from '../../../../../types/AIBestLocation/reco';
 
 type MapCardProps = {
   height: number;
@@ -77,7 +77,7 @@ function makeMarkerHTML(rank: number) {
       <img src="${MARKER_IMG}" style="width:36px;height:36px;display:block;" />
       <div style="
         position:absolute;
-        top:1px;               /* 숫자 높이 조절 포인트 */
+        top:2px;               /* 숫자 높이 조절 포인트 */
         left:0; right:0;
         margin:0 auto;
         width:18px; height:18px;

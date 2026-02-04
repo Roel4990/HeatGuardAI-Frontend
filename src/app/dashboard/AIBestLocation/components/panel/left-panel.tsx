@@ -14,9 +14,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { region_map } from "../../data/region-map";
+import { region_map } from "../../../data/AIBestLocation/region-map";
 
-import type { RecoRequestBody } from "../../types/reco";
+import type { RecoRequestBody } from "../../../../../types/AIBestLocation/reco";
 
 const clampCount = (n: number) => Math.min(5, Math.max(1, Math.floor(n)));
 
