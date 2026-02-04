@@ -11,7 +11,7 @@ type MapCardProps = {
   points: RecoLocItem[];
 };
 
-const MARKER_IMG = '/assets/rcmdPoint.svg';
+const MARKER_IMG = '/assets/marker.svg';
 
 export default function MapCard({ height, points }: MapCardProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +57,7 @@ export default function MapCard({ height, points }: MapCardProps) {
   }
 
   return (
-    <Box sx={{ height, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
+    <Box sx={{ height, mb: 2, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       <Script
         src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`}
         strategy="afterInteractive"
@@ -83,13 +83,13 @@ function makeMarkerHTML(rank: number) {
         width:18px; height:18px;
         border-radius:999px;
         background:#fff;
-        border:2px solid #f57c00;
+        border:2px solid #4A60DD;
         display:flex;
         align-items:center;
         justify-content:center;
         font-weight:900;
         font-size:11px;
-        color:#f57c00;
+        color:#4A60DD;
         box-sizing:border-box;
       ">
         ${rank}

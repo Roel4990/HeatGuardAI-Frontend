@@ -34,7 +34,8 @@ export default function ResultView({
           flexShrink: 0,
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-          gap: 1,
+          gap: 3,
+					mb: 1
         }}
       >
         <StateCard label="분석 지역 범위 📉" value={data.data!.result_address} />
@@ -47,7 +48,7 @@ export default function ResultView({
       <MapCard height={mapHeight} points={items} />
 
       {/* 결과 카드 리스트 */}
-      <Stack spacing={2}>
+      <Stack spacing={4}>
         {items.map((item) => (
           <ResultCard key={`${item.reco_loc_rank}-${item.gee_loc_adress}`} item={item} />
         ))}

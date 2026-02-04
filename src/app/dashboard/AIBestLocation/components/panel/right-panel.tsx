@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Paper from '@mui/material/Paper';
 
 import type { RecoApiResponse, RecoRequestBody } from '../../../../../types/AIBestLocation/reco';
 
@@ -30,8 +29,7 @@ export default function RightPanel({
 
   return (
     <Box sx={{ flex: 7.3, minWidth: 0 }}>
-      <Card sx={{ border: '1px solid #f57c00', display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Paper elevation={4} sx={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 2, p: 3 }}>
           {/* ✅ 처음(또는 새로고침)에는 Idle, 검색 후에는 Result */}
           {hasResult ? (
             <ResultView mapHeight={mapHeight} request={request} data={data!} />
@@ -40,8 +38,7 @@ export default function RightPanel({
           )}
           {/* ✅ 로딩은 overlay로 */}
           {isLoading && <LoadingOverlay />}
-        </CardContent>
-      </Card>
+      </Paper>
     </Box>
   );
 }

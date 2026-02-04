@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import {
 	CartesianGrid,
 	Legend,
@@ -42,7 +43,8 @@ function DetailRow({ label, value }: DetailRowProps): React.JSX.Element {
 
 function PlaceholderState(): React.JSX.Element {
 	return (
-		<Box
+		<Paper
+			variant="outlined"
 			sx={{
 				minHeight: 500,
 				width: '100%',
@@ -52,6 +54,7 @@ function PlaceholderState(): React.JSX.Element {
 				px: 3,
 				py: 5,
 				textAlign: 'center',
+				borderRadius: 2,
 			}}
 		>
 			<Box>
@@ -68,7 +71,7 @@ function PlaceholderState(): React.JSX.Element {
 					조회하고 싶은 쿨링포그 위치를 지도에서 선택해주세요
 				</Typography>
 			</Box>
-		</Box>
+		</Paper>
 	);
 }
 
@@ -80,14 +83,13 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 	const locationName = fog.cf_location.trim() || '-';
 
 	return (
-		<Box sx={{ px: 4, py: 1 }}>
-			<Box
+		<Box sx={{ p: 2 }}>
+			<Paper
+				variant="outlined"
 				sx={{
 					borderRadius: 2,
-					border: '1px solid',
-					borderColor: 'grey.100',
 					p: 2,
-					bgcolor: 'common.white',
+					bgcolor: 'background.default'
 				}}
 			>
 				<Typography variant="h6" color="text.primary">
@@ -100,17 +102,15 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						</Typography>
 					</Box>
 				</Box>
-			</Box>
+			</Paper>
 
 			<Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', mt: 3 }}>
-				<Box
+				<Paper
+					variant="outlined"
 					sx={{
 						flex: '1 1 320px',
 						borderRadius: 2,
-						border: '1px solid',
-						borderColor: 'grey.100',
 						p: 2,
-						bgcolor: 'common.white',
 					}}
 				>
 					<Typography variant="subtitle2" color="text.primary">
@@ -127,15 +127,13 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						<DetailRow label="이름" value={fog.cf_manager_nm} />
 						<DetailRow label="전화번호" value={fog.cf_manager_contact} />
 					</Box>
-				</Box>
-				<Box
+				</Paper>
+				<Paper
+					variant="outlined"
 					sx={{
 						flex: '1 1 320px',
 						borderRadius: 2,
-						border: '1px solid',
-						borderColor: 'grey.100',
 						p: 2,
-						bgcolor: 'common.white',
 					}}
 				>
 					<Typography variant="subtitle2" color="text.primary">
@@ -146,7 +144,7 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}°C`} />
 						<DetailRow label="습도" value={`${fog.cf_hum_per}%`} />
 					</Box>
-				</Box>
+				</Paper>
 			</Box>
 		</Box>
 	);
@@ -169,32 +167,28 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 
 	if (!selectedCoolingFog) {
 		return (
-			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
-				<PlaceholderState />
-			</Card>
+			<PlaceholderState />
 		);
 	}
 
 	return (
-		<Box className="space-y-6">
-			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 1 }}>
+		<Stack spacing={3}>
+			<Paper variant="outlined" sx={{ borderRadius: 2 }}>
 				<DetailState fog={selectedCoolingFog} />
-			</Card>
+			</Paper>
 
-			<Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'grey.300', boxShadow: 2 }}>
-				<Box sx={{ px: 4, py: 3 }}>
+			<Paper variant="outlined" sx={{ borderRadius: 2 }}>
+				<Box sx={{ p: 3 }}>
 					<Typography variant="h6" sx={{ fontWeight: 700 }}>
 						냉방 성능 분석 (가동 기록, 24시간)
 					</Typography>
 					<Box sx={{ mt: 3 }}>
-						<Box
+						<Paper
+							variant="outlined"
 							sx={{
 								height: 260,
 								width: '100%',
 								borderRadius: 2,
-								border: '1px solid',
-								borderColor: 'grey.200',
-								bgcolor: 'grey.100',
 								p: 2,
 							}}
 						>
@@ -224,10 +218,10 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 									/>
 								</LineChart>
 							</ResponsiveContainer>
-						</Box>
+						</Paper>
 					</Box>
 				</Box>
-			</Card>
-		</Box>
+			</Paper>
+		</Stack>
 	);
 }
