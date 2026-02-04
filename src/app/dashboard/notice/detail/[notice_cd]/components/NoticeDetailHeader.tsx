@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Button from "@mui/material/Button";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Stack from "@mui/material/Stack";
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 export function NoticeDetailHeader() {
@@ -24,21 +23,6 @@ export function NoticeDetailHeader() {
 			</Button>
 
 			<Stack direction="row" spacing={1}>
-				<Button
-					variant="outlined"
-					startIcon={<EditOutlinedIcon />}
-					sx={{
-						color: '#4ED6B8',
-						borderColor: '#4ED6B8',
-						'&:hover': {
-							backgroundColor: 'rgba(78, 214, 184, 0.08)',
-							borderColor: '#3EC9AD',
-						},
-					}}
-				>
-					수정
-				</Button>
-
 				<Button
 					variant="outlined"
 					startIcon={<DeleteOutlineIcon />}

@@ -37,7 +37,7 @@ export function NoticeHeader() {
 						공지사항
 					</Typography>
 					<Typography variant="body2" color="text.secondary">
-						열심지수 쿨링포그 AI 시스템 소식
+						열심지수 쿨링포그 AI 시스템 소식입니다.
 					</Typography>
 				</Box>
 			</Box>

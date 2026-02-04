@@ -15,6 +15,7 @@ type RealTimeMapProps = {
 };
 
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
+const MARKER_IMG = '/assets/marker.svg';
 
 export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
 	const mapContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -41,6 +42,13 @@ export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(fog.lat, fog.lng),
 				map,
+				icon: {
+					url: MARKER_IMG,
+					size: new naver.maps.Size(32, 32),
+					scaledSize: new naver.maps.Size(32, 32),
+					origin: new naver.maps.Point(0, 0),
+					anchor: new naver.maps.Point(16, 32),
+				},
 			});
 
 			naver.maps.Event.addListener(marker, 'click', () => {

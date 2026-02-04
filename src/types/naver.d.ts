@@ -8,6 +8,7 @@ declare global {
         Map: new (mapDiv: HTMLElement | null, options: object) => NaverMap;
         LatLng: new (lat: number, lng: number) => NaverMap;
         Marker: new (options: object) => NaverMap;
+				Size: new (width: number, height: number) => NaverMap;
         Point: new (x: number, y: number) => NaverMap;
         Event: {
           addListener: (marker: NaverMap, event: string, callback: () => void) => void;

@@ -1,5 +1,5 @@
 // app/dashboard/AIBestLocation/data/ai-best-location.ts
-import type { RecoApiResponse } from "../types/reco";
+import type { RecoApiResponse } from "../../../../types/AIBestLocation/reco";
 
 /**
  * ✅ AI 최적 위치 추천 더미데이터
