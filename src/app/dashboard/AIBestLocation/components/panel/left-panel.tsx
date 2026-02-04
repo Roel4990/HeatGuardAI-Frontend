@@ -1,10 +1,8 @@
 'use client';
 
 import * as React from "react";
-import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -17,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import { region_map } from "../../data/region-map";
 
 import type { RecoRequestBody } from "../../types/reco";
+import Box from "@mui/material/Box";
 
 const clampCount = (n: number) => Math.min(5, Math.max(1, Math.floor(n)));
 
@@ -51,8 +50,7 @@ export default function LeftPanel({
         maxHeight: { md: `calc(100vh - ${headerHeight}px - 32px)` },
       }}
     >
-      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <CardContent sx={{ height: "100%", overflow: "auto" }}>
+      <Paper elevation={4} sx={{ height: "100%", display: "flex", flexDirection: "column", borderRadius: 2, p: 3, overflow: 'auto' }}>
           <Stack spacing={3} sx={{ minHeight: 0 }}>
             <Typography variant="h6">설치 목표 기반 쿨링포그 위치 추천</Typography>
 
@@ -147,15 +145,14 @@ export default function LeftPanel({
             <Button
               variant="contained"
               fullWidth
-              sx={{ mt: "auto", bgcolor: "#f57c00", "&:hover": { bgcolor: "#ef6c00" } }}
+              sx={{ mt: "auto", bgcolor: "#4A60DD", "&:hover": { bgcolor: "#2e49e1" } }}
               onClick={onSubmitAction}
               disabled={isLoading}
             >
               AI 최적위치 추천
             </Button>
           </Stack>
-        </CardContent>
-      </Card>
+      </Paper>
     </Box>
   );
 }

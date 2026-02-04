@@ -3,13 +3,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-
+import { AiBestLocationHeader } from './components/ai-best-location-header';
 import type { RecoApiResponse, RecoRequestBody } from './types/reco';
 import { postReco } from './lib/api';
 
 import LeftPanel from './components/panel/left-panel';
 import RightPanel from './components/panel/right-panel';
+import { Container } from "@mui/material";
 
 export default function Page(): React.JSX.Element {
   const HEADER_HEIGHT = 64; // 상단 헤더 높이
@@ -51,37 +51,37 @@ export default function Page(): React.JSX.Element {
   };
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography variant="h4">AI 최적 위치</Typography>
-      </Box>
+		<Container maxWidth="lg" sx={{ py: 4 }}>
+			<Stack spacing={3}>
+				<AiBestLocationHeader />
 
-      {/* ✅ 왼쪽 고정 + 오른쪽 스크롤 구조 */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: { md: 'flex-start' },
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: { xs: 2, md: 2 },
-        }}
-      >
-        {/* Left (sticky) */}
-        <LeftPanel
-          headerHeight={HEADER_HEIGHT}
-          value={request}
-          onChangeAction={(next) => setRequest((prev) => ({ ...prev, ...next }))}
-          onSubmitAction={handleSubmit}
-          isLoading={isLoading}
-        />
+				{/* ✅ 왼쪽 고정 + 오른쪽 스크롤 구조 */}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: { md: 'flex-start' },
+						flexDirection: { xs: 'column', md: 'row' },
+						gap: { xs: 2, md: 2 },
+					}}
+				>
+					{/* Left (sticky) */}
+					<LeftPanel
+						headerHeight={HEADER_HEIGHT}
+						value={request}
+						onChangeAction={(next) => setRequest((prev) => ({ ...prev, ...next }))}
+						onSubmitAction={handleSubmit}
+						isLoading={isLoading}
+					/>
 
-        {/* Right (Idle/Loading/Result) */}
-        <RightPanel
-          mapHeight={MAP_HEIGHT}
-          isLoading={isLoading}
-          request={request}
-          data={data}
-        />
-      </Box>
-    </Stack>
+					{/* Right (Idle/Loading/Result) */}
+					<RightPanel
+						mapHeight={MAP_HEIGHT}
+						isLoading={isLoading}
+						request={request}
+						data={data}
+					/>
+				</Box>
+			</Stack>
+		</Container>
   );
 }

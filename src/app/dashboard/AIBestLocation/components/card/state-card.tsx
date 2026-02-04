@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 export default function StateCard({
@@ -15,24 +14,25 @@ export default function StateCard({
   unit?: string;
 }) {
   return (
-    <Card
+    <Paper
       sx={{
         borderRadius: 2,
-        border: '1px solid #eee',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.06)', // ✅ 그림자만 추가
-        bgcolor: '#fff',
+        p: 2,
+        boxShadow: 4,
+        transition: (theme) => theme.transitions.create('box-shadow'),
+        '&:hover': {
+          boxShadow: 8,
+        },
       }}
     >
-      <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
-        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800 }}>
-          {label}
-        </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800 }}>
+        {label}
+      </Typography>
 
-        <Typography sx={{ fontWeight: 900, fontSize: 18, mt: 0.5 }}>
-          {value}
-          {unit ? ` ${unit}` : ''}
-        </Typography>
-      </CardContent>
-    </Card>
+      <Typography sx={{ fontWeight: 900, fontSize: 18, mt: 0.5 }}>
+        {value}
+        {unit ? ` ${unit}` : ''}
+      </Typography>
+    </Paper>
   );
 }
