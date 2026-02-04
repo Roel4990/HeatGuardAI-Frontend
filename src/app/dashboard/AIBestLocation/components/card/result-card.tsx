@@ -2,26 +2,24 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import type { RecoLocItem } from '../../types/reco';
+import type { RecoLocItem } from '../../../../../types/AIBestLocation/reco';
 
 const formatNumber = (n: number) => n.toLocaleString('ko-KR');
 
 export default function ResultCard({ item }: { item: RecoLocItem }): React.JSX.Element {
   return (
-    <Card sx={{ borderRadius: 2, border: '1px solid #eee', overflow: 'hidden' }}>
-      <CardContent sx={{ p: 2.5 }}>
+    <Paper variant="outlined" sx={{ borderRadius: 2, p: 2.5 }}>
         {/* 상단 헤더 */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Chip
               label={`${item.reco_loc_rank}위`}
-              sx={{ bgcolor: '#f57c00', color: 'white', fontWeight: 900, borderRadius: 1.5 }}
+              sx={{ bgcolor: '#4A60DD', color: 'white', fontWeight: 900, borderRadius: 1.5 }}
             />
             <Chip
               label="AI 추천"
@@ -94,7 +92,6 @@ export default function ResultCard({ item }: { item: RecoLocItem }): React.JSX.E
             ))}
           </Box>
         </Box>
-      </CardContent>
-    </Card>
+      </Paper>
   );
 }

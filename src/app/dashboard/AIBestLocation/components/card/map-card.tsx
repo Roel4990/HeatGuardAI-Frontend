@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import Box from '@mui/material/Box';
 
-import type { RecoLocItem } from '../../types/reco';
+import type { RecoLocItem } from '../../../../../types/AIBestLocation/reco';
 
 type MapCardProps = {
   height: number;
   points: RecoLocItem[];
 };
 
-const MARKER_IMG = '/assets/rcmdPoint.svg';
+const MARKER_IMG = '/assets/marker.svg';
 
 export default function MapCard({ height, points }: MapCardProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +57,7 @@ export default function MapCard({ height, points }: MapCardProps) {
   }
 
   return (
-    <Box sx={{ height, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
+    <Box sx={{ height, mb: 2, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       <Script
         src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`}
         strategy="afterInteractive"
@@ -77,19 +77,19 @@ function makeMarkerHTML(rank: number) {
       <img src="${MARKER_IMG}" style="width:36px;height:36px;display:block;" />
       <div style="
         position:absolute;
-        top:1px;               /* 숫자 높이 조절 포인트 */
+        top:2px;               /* 숫자 높이 조절 포인트 */
         left:0; right:0;
         margin:0 auto;
         width:18px; height:18px;
         border-radius:999px;
         background:#fff;
-        border:2px solid #f57c00;
+        border:2px solid #4A60DD;
         display:flex;
         align-items:center;
         justify-content:center;
         font-weight:900;
         font-size:11px;
-        color:#f57c00;
+        color:#4A60DD;
         box-sizing:border-box;
       ">
         ${rank}

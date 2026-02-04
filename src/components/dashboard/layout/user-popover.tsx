@@ -1,5 +1,4 @@
 import * as React from 'react';
-import RouterLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -8,14 +7,26 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
 import { SignOutIcon } from '@phosphor-icons/react/dist/ssr/SignOut';
-import { UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 
-import { paths } from '@/paths';
+
 import { authClient } from '@/lib/auth/client';
 import { logger } from '@/lib/default-logger';
 import { useUser } from '@/hooks/use-user';
+
+const maskName = (name?: string) => {
+	if (!name) return '-';
+	if (name.length <= 2) return name[0] + '*';
+	return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+};
+
+const maskEmail = (email?: string) => {
+	if (!email) return '-';
+	const [id, domain] = email.split('@');
+	if (!domain) return email;
+	if (id.length <= 3) return '*'.repeat(id.length) + '@' + domain;
+	return id.slice(0, 3) + '*'.repeat(id.length - 3) + '@' + domain;
+};
 
 export interface UserPopoverProps {
   anchorEl: Element | null;
@@ -24,7 +35,7 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { checkSession } = useUser();
+  const { checkSession,user } = useUser();
 
   const router = useRouter();
 
@@ -35,6 +46,16 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       if (error) {
         logger.error('Sign out error', error);
         return;
+      }
+
+      try {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_auth');
+        localStorage.removeItem('user_nm');
+        localStorage.removeItem('user_email');
+				localStorage.removeItem('user_cd');
+      } catch (storageError) {
+        logger.error('Sign out storage error', storageError);
       }
 
       // Refresh the auth state
@@ -57,30 +78,18 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">홍길동</Typography>
-        <Typography color="text.secondary" variant="body2">
-          hong@korea.kr
-        </Typography>
+				<Typography variant="subtitle1">{maskName(user?.name)}</Typography>
+				<Typography color="text.secondary" variant="body2">
+					{maskEmail(user?.email)}
+				</Typography>
       </Box>
       <Divider />
       <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>
-        <MenuItem component={RouterLink} href={paths.dashboard.settings} onClick={onClose}>
-          <ListItemIcon>
-            <GearSixIcon fontSize="var(--icon-fontSize-md)" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
-          <ListItemIcon>
-            <UserIcon fontSize="var(--icon-fontSize-md)" />
-          </ListItemIcon>
-          Profile
-        </MenuItem>
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Sign out
+          로그아웃
         </MenuItem>
       </MenuList>
     </Popover>

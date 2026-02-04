@@ -3,7 +3,6 @@
 import * as React from 'react';
 
 import type { User } from '@/types/user';
-import { authClient } from '@/lib/auth/client';
 import { logger } from '@/lib/default-logger';
 
 export interface UserContextValue {
@@ -28,15 +27,27 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
 
   const checkSession = React.useCallback(async (): Promise<void> => {
     try {
-      const { data, error } = await authClient.getUser();
+      const accessToken = localStorage.getItem('access_token');
+      const userName = localStorage.getItem('user_nm');
+      const userEmail = localStorage.getItem('user_email');
+      const userAuth = localStorage.getItem('user_auth');
+			const userCd = localStorage.getItem('user_cd')
 
-      if (error) {
-        logger.error(error);
-        setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+      if (!accessToken) {
+        setState((prev) => ({ ...prev, user: null, error: null, isLoading: false }));
         return;
       }
 
-      setState((prev) => ({ ...prev, user: data ?? null, error: null, isLoading: false }));
+      const user: User = {
+        id: userEmail ?? 'unknown',
+        name: userName ?? undefined,
+        email: userEmail ?? undefined,
+        user_auth: userAuth ?? undefined,
+        access_token: accessToken,
+				user_cd: userCd ?? undefined,
+      };
+
+      setState((prev) => ({ ...prev, user, error: null, isLoading: false }));
     } catch (error) {
       logger.error(error);
       setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));

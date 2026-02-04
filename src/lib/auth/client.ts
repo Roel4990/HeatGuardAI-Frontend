@@ -17,10 +17,10 @@ const user = {
 } satisfies User;
 
 export interface SignUpParams {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
+  terms: boolean;
 }
 
 export interface SignInWithOAuthParams {
@@ -57,8 +57,8 @@ class AuthClient {
     // Make API request
 
     // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+    if (email !== 'sofia@devias.io' || password !== 'Secret123!') {
+      return { error: '아이디 또는 비밀번호가 일치하지 않습니다' };
     }
 
     const token = generateToken();

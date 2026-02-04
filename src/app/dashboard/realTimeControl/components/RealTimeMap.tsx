@@ -5,25 +5,21 @@ import Script from 'next/script';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import type { CoolingFogListItem } from '@/types/realTimeControl/real-time-control';
+import { coolingFogs, type CoolingFogData } from '@/dummydata/cooling-fogs';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NaverMap = any;
 
 type RealTimeMapProps = {
-	coolingFogList: CoolingFogListItem[];
-	onSelectCoolingFog: (fogId: string) => void;
+	onSelectCoolingFog: (fog: CoolingFogData) => void;
 };
 
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
+const MARKER_IMG = '/assets/marker.svg';
 
-export function RealTimeMap({
-	coolingFogList,
-	onSelectCoolingFog,
-}: RealTimeMapProps): React.JSX.Element {
+export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
 	const mapContainerRef = React.useRef<HTMLDivElement | null>(null);
 	const mapRef = React.useRef<NaverMap | null>(null);
-	const markersRef = React.useRef<NaverMap[]>([]);
 	const [isScriptReady, setIsScriptReady] = React.useState(false);
 
 	const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
@@ -41,33 +37,27 @@ export function RealTimeMap({
 			zoom: 13,
 		});
 
-		mapRef.current = map;
-	}, [isScriptReady]);
-
-	React.useEffect(() => {
-		const map = mapRef.current;
-		if (!isScriptReady || !map) return;
-    // eslint-disable-next-line unicorn/prefer-global-this
-		const naver = window.naver;
-		if (!naver?.maps) return;
-
-		for (const marker of markersRef.current) {
-			marker.setMap(null);
-		}
-		markersRef.current = [];
-
-		for (const fog of coolingFogList) {
+		// Marker click -> notify parent to update the info panel.
+		for (const fog of coolingFogs) {
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(fog.lat, fog.lng),
 				map,
+				icon: {
+					url: MARKER_IMG,
+					size: new naver.maps.Size(32, 32),
+					scaledSize: new naver.maps.Size(32, 32),
+					origin: new naver.maps.Point(0, 0),
+					anchor: new naver.maps.Point(16, 32),
+				},
 			});
 
 			naver.maps.Event.addListener(marker, 'click', () => {
-				onSelectCoolingFog(fog.cf_cd);
+				onSelectCoolingFog(fog);
 			});
-			markersRef.current.push(marker);
 		}
-	}, [coolingFogList, isScriptReady, onSelectCoolingFog]);
+
+		mapRef.current = map;
+	}, [isScriptReady, onSelectCoolingFog]);
 
 	return (
 		<div style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -102,4 +92,3 @@ export function RealTimeMap({
 		</div>
 	);
 }
-

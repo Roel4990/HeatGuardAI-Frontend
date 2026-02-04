@@ -1,6 +1,6 @@
 // app/dashboard/AIBestLocation/lib/api.ts
-import type { RecoApiResponse, RecoRequestBody } from "../types/reco";
-import { MOCK_RECO_RESPONSE } from "@/app/dashboard/AIBestLocation/data/ai-best-location";
+import type { RecoApiResponse, RecoRequestBody } from "../../../../types/AIBestLocation/reco";
+import { MOCK_RECO_RESPONSE } from "@/app/dashboard/data/AIBestLocation/ai-best-location";
 
 export async function postReco(body: RecoRequestBody): Promise<RecoApiResponse> {
   const gu = body.target_region_gu?.trim();
