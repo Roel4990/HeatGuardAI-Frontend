@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { DUMMY_NOTICES } from "@/app/dashboard/data/notification-data";
+import { useNoticeListMutation } from "@/hooks/mutations/noticeList/use-notice-list-mutation";
+import type { Notice } from "@/types/notice/notice";
 import { Divider, List, ListItemButton, Popover, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -22,8 +23,10 @@ export function MainNav(): React.JSX.Element {
 	const router = useRouter();
 	const userPopover = usePopover<HTMLDivElement>();
 	const openNotice = Boolean(noticeAnchorEl);
+  const [notices, setNotices] = React.useState<Notice[]>([]);
+  const { mutateAsync } = useNoticeListMutation();
 
-	return (
+  return (
 		<React.Fragment>
 			<Box
 				component="header"
@@ -51,7 +54,17 @@ export function MainNav(): React.JSX.Element {
 						</IconButton>
 					</Stack>
 					<Stack sx={{ alignItems: "center" }} direction="row" spacing={2}>
-						<IconButton onClick={(e) => setNoticeAnchorEl(e.currentTarget)}>
+						<IconButton onClick={(e) => {
+              setNoticeAnchorEl(e.currentTarget);
+              mutateAsync({ notice_type: undefined, limit_count: 5 })
+                .then((result) => {
+                  if (result.success && result.data) {
+                    setNotices(result.data.notice_list);
+                  }
+                })
+                .catch(() => {});
+            }}
+            >
 							<BellIcon />
 						</IconButton>
 						<Avatar
@@ -93,7 +106,7 @@ export function MainNav(): React.JSX.Element {
 				<Divider />
 
 				<List disablePadding>
-					{DUMMY_NOTICES.map((notice) => (
+					{notices.map((notice) => (
 						<ListItemButton
 							key={notice.notice_cd}
 							onClick={() => {
