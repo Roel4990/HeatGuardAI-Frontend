@@ -1,13 +1,15 @@
 'use client';
 
-import { Stack } from '@mui/material';
+import { Stack} from '@mui/material';
 import { Notice } from "@/types/notice/notice";
 import { NoticeItem } from './NoticeItem';
 import * as React from "react";
+import { useNoticeListMutation } from "@/hooks/mutations/noticeList/use-notice-list-mutation";
+import type { NoticeCategory } from "@/app/dashboard/notice/components/NoticeCategoryTabs";
 
 
 // 초기 공지사항 데이터입니다.
-const initialNotices: Notice[] = [
+/*const initialNotices: Notice[] = [
 	{
 		notice_cd: "N1235",
 		notice_title: '열섬지수 데이터 실시간 모니터링 기능 추가',
@@ -36,10 +38,25 @@ const initialNotices: Notice[] = [
 		create_dt: "2025-01-05",
 		notice_fix_yn: false,
 	},
-];
+];*/
 
-export function NoticeList() {
-	const [notices] = React.useState<Notice[]>(initialNotices);
+export function NoticeList({ category }: { category: NoticeCategory }) {
+	const [notices, setNotices] = React.useState<Notice[]>([]);
+	const { mutateAsync} = useNoticeListMutation();
+
+	React.useEffect(() => {
+		const fetchList = async () => {
+			const notice_type = category === '전체' ? undefined : category;
+			const result = await mutateAsync({ notice_type, limit_count: undefined });
+			if (result.success && result.data) {
+				setNotices(result.data.notice_list);
+			}
+		};
+		fetchList().catch(() => {
+			// noop
+		});
+	}, [category, mutateAsync]);
+
 	return (
 		<Stack spacing={1.5}>
 			{notices.map((notice) => (

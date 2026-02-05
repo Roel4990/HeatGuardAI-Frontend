@@ -51,6 +51,6 @@ export const noticeTypeStyles: Record<
 > = {
 	공지: { bg: '#17AACF', fg: '#ffffff' },
 	업데이트: { bg: '#318CE8', fg: '#ffffff' },
-	점검: { bg: '#EDF1F3', fg: '#1f2933' },
+	점검: { bg: '#C52A0A', fg: '#ffffff' },
 	이벤트: { bg: '#F59F0A', fg: '#ffffff' },
 };

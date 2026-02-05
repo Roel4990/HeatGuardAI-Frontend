@@ -1,12 +1,17 @@
 'use client';
 
-import { ToggleButton, ToggleButtonGroup, Box } from '@mui/material';
-import { useState } from 'react';
+import { JSX} from "react";
+import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
-const categories = ['전체', '공지', '업데이트', '이벤트', '점검'];
+const categories = ['전체', '공지', '업데이트', '이벤트', '점검'] as const;
+export type NoticeCategory = (typeof categories)[number];
 
-export function NoticeCategoryToggle() {
-	const [value, setValue] = useState<string>('전체');
+interface Props {
+	value: NoticeCategory;
+	onChange: (value: NoticeCategory) => void;
+}
+
+export function NoticeCategoryToggle({value, onChange}: Props): JSX.Element {
 
 	return (
 		<Box>
@@ -15,7 +20,7 @@ export function NoticeCategoryToggle() {
 				exclusive
 				onChange={(_, newValue) => {
 					if (newValue !== null) {
-						setValue(newValue);
+						onChange(newValue);
 					}
 				}}
 				sx={{
