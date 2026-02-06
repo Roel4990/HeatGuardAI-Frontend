@@ -33,7 +33,7 @@ export function NoticeDetailLayout({ notice } : NoticeDetailLayoutProps) {
 						},
 					}}
 				>
-					<NoticeDetailMeta create_at={notice.create_dt} notice_title={notice.notice_title} notice_type={notice.notice_type}/>
+					<NoticeDetailMeta create_at={notice.create_date} notice_title={notice.notice_title} notice_type={notice.notice_type}/>
 					<NoticeDetailContent content={notice.notice_content}/>
 					{notice.notice_file && (
 						<NoticeDetailAttachments file={notice.notice_file}/>

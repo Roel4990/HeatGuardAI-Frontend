@@ -11,6 +11,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import DownloadIcon from '@mui/icons-material/Download';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { NoticeFile } from "@/types/notice/notice";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ImageIcon from '@mui/icons-material/Image';
 
 interface NoticeDetailAttachmentsProps {
 	file: NoticeFile;
@@ -44,7 +46,13 @@ export function NoticeDetailAttachments({ file }: NoticeDetailAttachmentsProps) 
 					}}
 				>
 					<Box display="flex" alignItems="center" gap={1}>
-						<DescriptionIcon color="action" />
+						{file.notice_file_type === "application/pdf" ? (
+							<PictureAsPdfIcon color="action" />
+						) : file.notice_file_type?.startsWith("image/") ? (
+							<ImageIcon color="action" />
+						) : (
+							<DescriptionIcon color="action" />
+						)}
 						<Box>
 							<Typography fontSize={14}>
 								{file.notice_file_nm}
@@ -57,9 +65,19 @@ export function NoticeDetailAttachments({ file }: NoticeDetailAttachmentsProps) 
 
 					<IconButton>
 						<DownloadIcon
-							onClick={() => {
-								// TODO: 실제 다운로드 로직 연결
-								// downloadFile(file.notice_file_link)
+							onClick={async () => {
+								const url = file.notice_file_save_path;
+								if (!url) return;
+
+								const res = await fetch(url);
+								const blob = await res.blob();
+
+								const a = document.createElement("a");
+								a.href = URL.createObjectURL(blob);
+								a.download = file.notice_file_nm;
+								a.click();
+
+								URL.revokeObjectURL(a.href);
 							}}
 						/>
 					</IconButton>

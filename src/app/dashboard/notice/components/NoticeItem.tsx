@@ -56,7 +56,7 @@ export function NoticeItem({ noticeCd, type, date, title, pinned = false}: Notic
 							}}
 						/>
 						<Typography variant="caption" color="text.secondary">
-							{date}
+							{date?.slice(0, 10)}
 						</Typography>
 					</Box>
 

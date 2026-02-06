@@ -10,7 +10,7 @@ export interface BaseNotice {
 	notice_cd: string;
 	notice_title: string;
 	notice_type: NoticeType;
-	create_dt: string;
+	create_date: string;
 }
 
 /**
@@ -28,7 +28,7 @@ export interface NoticeFile {
 	notice_file_nm: string;
 	notice_file_type: string;
 	notice_file_size: number;
-	notice_file_link: string;
+	notice_file_save_path: string
 }
 
 /**

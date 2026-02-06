@@ -69,7 +69,7 @@ export function NoticeList({ category }: { category: NoticeCategory }) {
 					key={notice.notice_cd}
 					noticeCd={notice.notice_cd}
 					type={notice.notice_type}
-					date={notice.create_dt}
+					date={notice.create_date}
 					title={notice.notice_title}
 					pinned={notice.notice_fix_yn}
 				/>

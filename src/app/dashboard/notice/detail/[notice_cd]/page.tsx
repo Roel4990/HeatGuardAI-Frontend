@@ -2,10 +2,12 @@
 
 import * as React from 'react';
 import { NoticeDetailLayout } from "@/app/dashboard/notice/detail/[notice_cd]/components/NoticeDetailLayout";
-import type { NoticeDetail } from '@/types/notice/notice';
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useNoticeDetailQuery } from "@/hooks/mutations/noticeDetail/use-notice-detail-query";
+import Typography from "@mui/material/Typography";
 
-const mockNoticeDetail: NoticeDetail = {
+
+/*const mockNoticeDetail: NoticeDetail = {
 	notice_cd: 'NC1234',
 	notice_title: '열섬지수 데이터 실시간 모니터링 기능 추가',
 	notice_type: '이벤트',
@@ -33,10 +35,16 @@ const mockNoticeDetail: NoticeDetail = {
 		notice_file_size: 1024,
 		notice_file_link: "~"
 	},
-};
+};*/
+
 
 
 export default function Page() {
-	const [noticeDetail] = useState<NoticeDetail>(mockNoticeDetail);
-	return <NoticeDetailLayout notice = {noticeDetail}/>;
+	const { notice_cd } = useParams<{ notice_cd: string }>();
+	const { data, isLoading, isError } = useNoticeDetailQuery(notice_cd);
+
+	if (isLoading) return <Typography>로딩중...</Typography>;
+	if (isError || !data?.success || !data.data) return <Typography>공지 조회 실패</Typography>;
+
+	return <NoticeDetailLayout notice={data.data} />;
 }
