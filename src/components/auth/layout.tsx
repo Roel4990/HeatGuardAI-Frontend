@@ -9,9 +9,10 @@ import { DynamicLogo } from '@/components/core/logo';
 
 export interface LayoutProps {
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
-export function Layout({ children }: LayoutProps): React.JSX.Element {
+export function Layout({ children, footer }: LayoutProps): React.JSX.Element {
   return (
     <Box
       sx={{
@@ -30,6 +31,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
           <Box sx={{ maxWidth: '450px', width: '100%' }}>{children}</Box>
         </Box>
       </Box>
+      {footer}
     </Box>
   );
 }
