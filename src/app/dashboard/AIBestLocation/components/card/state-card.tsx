@@ -17,6 +17,7 @@ export default function StateCard({
     <Paper
 			variant="outlined"
       sx={{
+        background: 'linear-gradient(180deg, #F7FAFF 0%, #F1F5FF 100%)',
         borderRadius: 2,
         p: 2,
         transition: (theme) => theme.transitions.create('box-shadow'),

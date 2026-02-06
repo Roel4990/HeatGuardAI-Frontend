@@ -132,25 +132,6 @@ function MoneyBlock(props: { label: string; value: number; emphasize?: boolean }
   );
 }
 
-function CostBox(props: { label: string; total: number; unitLine: string }) {
-  const { label, total, unitLine } = props;
-  return (
-    <Box sx={{ flex: 1, minWidth: 0 }}>
-      <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 900, letterSpacing: "0.08em", lineHeight: 1.1 }}>
-        {label}
-      </Typography>
-
-      <Typography fontWeight={700} sx={{ mt: 0.35, lineHeight: 1.12, letterSpacing: "-0.02em" }}>
-        {formatKRW(total)}
-      </Typography>
-
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 0, lineHeight: 1.2, display: "block" }}>
-        {unitLine}
-      </Typography>
-    </Box>
-  );
-}
-
 type BudgetItem = FogItem & { qty: number };
 
 export default function CoolingFogBudgetPage() {
@@ -247,11 +228,10 @@ export default function CoolingFogBudgetPage() {
   };
 
   return (
-		<Container maxWidth="xl" sx={{ py: 4 }}>
-			<Stack spacing={3}>
-				{/* Header */}
-				<BudgetSimulationHeader />
-
+		<Container maxWidth="lg" sx={{ py: 1 }}>
+      {/* Header */}
+      <BudgetSimulationHeader />
+      <Stack spacing={3} sx={{mt: 4}}>
 				{/* 2 Column */}
 				<Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="flex-start">
 					{/* Left: Items */}
@@ -260,7 +240,7 @@ export default function CoolingFogBudgetPage() {
 							sx={{
 								display: "grid",
 								gap: 1.5,
-								gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+								gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(2, 1fr)" },
 								alignItems: "stretch",
 							}}
 						>
@@ -287,7 +267,7 @@ export default function CoolingFogBudgetPage() {
 										sx={{
 											cursor: "pointer",
 											borderRadius: UI_BORDER_RADIUS,
-											border: "1.5px solid",
+											border: "1px solid",
 											borderColor: isSelected ? "primary.main" : "divider",
 											bgcolor: isSelected ? UI_BG_ITEM_CARD_SELECTED : UI_BG_ITEM_CARD,
 											boxShadow: isSelected ? 2 : 0,
@@ -347,21 +327,64 @@ export default function CoolingFogBudgetPage() {
 										{/* Content */}
 										<Box sx={{ px: 2, pb: 2.25, flex: 1, display: "flex", flexDirection: "column" }}>
 											<Stack spacing={1.1} sx={{ flex: 1 }}>
-												<Box sx={{ minWidth: 0 }}>
-													<Typography fontWeight={900} sx={{ lineHeight: 1.2 }}>
-														{it.name}
-													</Typography>
-													<Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35 }}>
-														추천 설치: {it.loc}
-													</Typography>
-												</Box>
+                        <RowBetween>
+                          <Typography fontWeight={900} sx={{ lineHeight: 1.2, minWidth: 0 }}>
+                            {it.name}
+                          </Typography>
 
-												<RowBetween>
-													<CostBox label="A  초기 설치비" total={initCost} unitLine={`단가 ${formatKRW(it.unitPrice)}`} />
-													<CostBox label="B  연간 운영비" total={annualCost} unitLine={`개당 ${formatKRW(annualUnit)}`} />
-												</RowBetween>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: "block", whiteSpace: "nowrap", textAlign: "right" }}
+                          >
+                            추천 설치: {it.loc}
+                          </Typography>
+                        </RowBetween>
 
-												<Divider sx={{ mt: 0.5 }} />
+                        <Stack spacing={1}>
+                          {/* A row */}
+                          <RowBetween>
+                            <Typography
+                              variant="overline"
+                              color="text.secondary"
+                              sx={{ fontWeight: 900, letterSpacing: "0.08em", lineHeight: 1.1 }}
+                            >
+                              A. 초기 설치비
+                            </Typography>
+
+                            <Stack spacing={0} sx={{ minWidth: 0, textAlign: "right" }}>
+                              <Typography fontWeight={700} sx={{ lineHeight: 1.12, letterSpacing: "-0.02em" }}>
+                                {formatKRW(initCost)}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2, display: "block" }}>
+                                단가 {formatKRW(it.unitPrice)}
+                              </Typography>
+                            </Stack>
+                          </RowBetween>
+
+                          {/* B row */}
+                          <RowBetween>
+                            <Typography
+                              variant="overline"
+                              color="text.secondary"
+                              sx={{ fontWeight: 900, letterSpacing: "0.08em", lineHeight: 1.1 }}
+                            >
+                              B. 연간 운영비
+                            </Typography>
+
+                            <Stack spacing={0} sx={{ minWidth: 0, textAlign: "right" }}>
+                              <Typography fontWeight={700} sx={{ lineHeight: 1.12, letterSpacing: "-0.02em" }}>
+                                {formatKRW(annualCost)}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2, display: "block" }}>
+                                개당 {formatKRW(annualUnit)}
+                              </Typography>
+                            </Stack>
+                          </RowBetween>
+                        </Stack>
+
+
+                        <Divider sx={{ mt: 0.5 }} />
 
 												<RowBetween>
 													<Stack direction="row" spacing={1} alignItems="center" onClick={stopClick} onKeyDown={stopKeyDown}>
@@ -441,16 +464,12 @@ export default function CoolingFogBudgetPage() {
 								);
 							})}
 						</Box>
-
-						<Typography variant="caption" color="text.secondary" sx={{ pb: 1, mt: 1.5, display: "block" }}>
-							* 연간 운영비(B)는 (월 전기세 + 월 수도세)를 12개월로 환산하여 계산되며, 전기/수도 항목을 별도로 표시하지 않습니다.
-						</Typography>
 					</Box>
 
 					{/* Right: Sticky Sidebar */}
 					<Box
 						sx={{
-							width: { xs: "100%", md: 392 },
+							width: { xs: "100%", md: 355 },
 							position: { md: "sticky" },
 							top: { md: STICKY_TOP },
 							flexShrink: 0,
@@ -601,6 +620,9 @@ export default function CoolingFogBudgetPage() {
 						</Stack>
 					</Box>
 				</Stack>
+        <Typography variant="caption" color="text.secondary">
+          * 연간 운영비(B)는 (월 전기세 + 월 수도세)를 12개월로 환산하여 계산되며, 전기/수도 항목을 별도로 표시하지 않습니다.
+        </Typography>
 			</Stack>
 		</Container>
   );

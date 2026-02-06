@@ -32,7 +32,7 @@ export function BudgetSimulationHeader() {
 						예산 시뮬레이션
 					</Typography>
 					<Typography variant="body2" color="text.secondary">
-						품목을 선택(카드 클릭 또는 설치개수 입력)하고 운영기간/가용예산을 입력하면 예산 사용률과 남은 금액을 확인할 수 있습니다.
+            품목 선택 후 운영기간·예산을 입력하면 사용률과 잔액을 확인할 수 있습니다.
 					</Typography>
 				</Box>
 			</Box>

@@ -8,20 +8,20 @@ export default function IdleState() {
   return (
     <Box
       sx={{
-        py: 8,
+        py: 5,
         px: 2,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        gap: 3,
+        gap: 2,
       }}
     >
       <Box
         component="img"
         src="/assets/locationIdle.svg"
         alt="idle"
-        sx={{ width: 240, maxWidth: "100%", mb: 7}}
+        sx={{ width: 180, maxWidth: "100%", mb: 2}}
       />
 
       <Typography variant="h6" sx={{ fontWeight: 900 }}>

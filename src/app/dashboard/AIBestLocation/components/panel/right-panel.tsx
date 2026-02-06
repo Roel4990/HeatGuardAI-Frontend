@@ -4,7 +4,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
-import type { RecoApiResponse, RecoRequestBody } from '../../../../../types/AIBestLocation/reco';
+import type { RecoApiResponse, RecoRequestBody } from '@/types/AIBestLocation/reco';
 
 import IdleState from '../states/idle-state';
 import LoadingOverlay from '../states/loading-overlay';
@@ -28,7 +28,13 @@ export default function RightPanel({
     data.data.result.length > 0;
 
   return (
-    <Box sx={{ flex: 7.3, minWidth: 0 }}>
+
+    <Box sx={{
+      minWidth: "100%",
+      border: "1px solid",
+      borderColor: "divider",
+      borderRadius: 2,
+      flexDirection: "column"}}>
       <Paper elevation={4} sx={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 2, p: 3 }}>
           {/* ✅ 처음(또는 새로고침)에는 Idle, 검색 후에는 Result */}
           {hasResult ? (

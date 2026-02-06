@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import Box from '@mui/material/Box';
 
-import type { RecoLocItem } from '../../../../../types/AIBestLocation/reco';
+import type { RecoLocItem } from '@/types/AIBestLocation/reco';
+import * as React from "react";
 
 type MapCardProps = {
   height: number;
@@ -63,6 +64,32 @@ export default function MapCard({ height, points }: MapCardProps) {
         strategy="afterInteractive"
         onLoad={() => setLoaded(true)}
       />
+
+      {/* ✅ 좌측 상단 오버레이 */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
+          zIndex: 8, // 지도/마커 위로
+          px: 1.5,
+          py: 0.75,
+          borderRadius: 999,
+          bgcolor: '#fff',
+          boxShadow: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.75,
+          fontWeight: 700,
+          fontSize: 14,
+          lineHeight: 1,
+        }}
+      >
+        {/* 아이콘이 필요하면 이미지/아이콘 추가 */}
+        <Box component="img" src="/assets/marker.svg" alt="AI 쿨링포그 위치 추천" sx={{ width: 16, height: 16 }} />
+        쿨링포그 위치 추천
+      </Box>
+
       <Box ref={mapRef} sx={{ width: '100%', height: '100%' }} />
     </Box>
   );
@@ -74,7 +101,7 @@ export default function MapCard({ height, points }: MapCardProps) {
 function makeMarkerHTML(rank: number) {
   return `
     <div style="position:relative;width:36px;height:36px;transform:translate(-50%,-100%);">
-      <img src="${MARKER_IMG}" style="width:36px;height:36px;display:block;" />
+      <img src="${MARKER_IMG}" style="width:36px;height:36px;display:block;" alt="No image"/>
       <div style="
         position:absolute;
         top:2px;               /* 숫자 높이 조절 포인트 */
