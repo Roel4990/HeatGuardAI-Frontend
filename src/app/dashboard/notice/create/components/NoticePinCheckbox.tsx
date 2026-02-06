@@ -1,10 +1,12 @@
 import { Checkbox, FormControlLabel } from '@mui/material';
 
-export function NoticePinCheckbox() {
+export function NoticePinCheckbox({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
 	return (
 		<FormControlLabel
 			control={
 				<Checkbox
+					checked={checked}
+					onChange={(e) => onChange(e.target.checked)}
 					sx={{
 						color: '#9CA3AF', // 기본 아이콘 색
 						'&.Mui-checked': {

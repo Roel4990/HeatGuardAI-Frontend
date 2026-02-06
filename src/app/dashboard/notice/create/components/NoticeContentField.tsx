@@ -1,10 +1,12 @@
 import { TextField } from '@mui/material';
 
-export function NoticeContentField() {
+export function NoticeContentField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
 	return (
 		<TextField
 			label="내용"
 			placeholder="공지사항 내용을 입력하세요"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
 			multiline
 			rows={10}
 			fullWidth
