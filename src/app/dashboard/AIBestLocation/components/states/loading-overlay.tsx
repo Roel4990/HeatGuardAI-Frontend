@@ -19,6 +19,7 @@ export default function LoadingOverlay() {
         gap: 2,
         zIndex: 20,
         backdropFilter: 'blur(2px)',
+        borderRadius: 2,
       }}
     >
       <CircularProgress />

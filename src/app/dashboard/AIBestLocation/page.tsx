@@ -4,10 +4,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { AiBestLocationHeader } from './components/ai-best-location-header';
-// import type { RecoApiResponse, RecoRequestBody } from './types/reco';
-import Typography from '@mui/material/Typography';
 
-import type { RecoApiResponse, RecoRequestBody } from '../../../types/AIBestLocation/reco';
+import type { RecoApiResponse, RecoRequestBody } from '@/types/AIBestLocation/reco';
 import { postReco } from './lib/api';
 
 import LeftPanel from './components/panel/left-panel';
@@ -54,35 +52,37 @@ export default function Page(): React.JSX.Element {
   };
 
   return (
-		<Container maxWidth="xl" sx={{ py: 4 }}>
-			<Stack spacing={3}>
-				<AiBestLocationHeader />
-				{/* ✅ 왼쪽 고정 + 오른쪽 스크롤 구조 */}
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: { md: 'flex-start' },
-						flexDirection: { xs: 'column', md: 'row' },
-						gap: { xs: 2, md: 2 },
-					}}
-				>
-					{/* Left (sticky) */}
-					<LeftPanel
-						headerHeight={HEADER_HEIGHT}
-						value={request}
-						onChangeAction={(next) => setRequest((prev) => ({ ...prev, ...next }))}
-						onSubmitAction={handleSubmit}
-						isLoading={isLoading}
-					/>
+		<Container maxWidth="lg" sx={{ py: 1 }}>
+      <AiBestLocationHeader />
+      <Stack spacing={2} sx={{ mt: 4 }}>
+        <Box
+          sx={{
+            position: "sticky",
+            top: `${HEADER_HEIGHT + 12}px`,
+            alignSelf: "flex-start",
+            zIndex: 10,
+            width: "100%",
+            flex: "0 0 auto",
+          }}
+        >
+          <LeftPanel
+            headerHeight={HEADER_HEIGHT}
+            value={request}
+            onChangeAction={(next) => setRequest((prev) => ({ ...prev, ...next }))}
+            onSubmitAction={handleSubmit}
+            isLoading={isLoading}
+          />
+        </Box>
 
-					{/* Right (Idle/Loading/Result) */}
-					<RightPanel
-						mapHeight={MAP_HEIGHT}
-						isLoading={isLoading}
-						request={request}
-						data={data}
-					/>
-				</Box>
+        {/* RIGHT */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <RightPanel
+            mapHeight={MAP_HEIGHT}
+            isLoading={isLoading}
+            request={request}
+            data={data}
+          />
+        </Box>
 			</Stack>
 		</Container>
   );
