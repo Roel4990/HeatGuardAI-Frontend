@@ -23,6 +23,7 @@ export function NoticeCreateForm() {
   const [cfCd, setCfCd] = React.useState('');
   const [content, setContent] = React.useState('');
   const [pin, setPin] = React.useState(false);
+	const [noticeFileCd, setNoticeFileCd] = React.useState<number | null>(null);
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -44,7 +45,7 @@ export function NoticeCreateForm() {
       cf_cd: cfCd,
       notice_content: content,
       notice_fix_yn: pin,
-      notice_file_cd: null,
+      notice_file_cd: noticeFileCd,
     });
 
     if (result.success) {
@@ -76,7 +77,7 @@ export function NoticeCreateForm() {
       <NoticeCategorySelect value={category} onChange={setCategory} />
       <NoticeFogSelect value={cfCd} onChange={setCfCd} />
       <NoticeContentField value={content} onChange={setContent} />
-      <NoticeFileUpload />
+			<NoticeFileUpload onUploaded={setNoticeFileCd} />
       <NoticePinCheckbox checked={pin} onChange={setPin} />
       <NoticeFormActions onCancel={() => router.back()} onSubmit={handleSubmit} submitting={isPending} />
 		</Stack>
