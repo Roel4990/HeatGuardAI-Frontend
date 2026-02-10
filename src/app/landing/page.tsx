@@ -96,7 +96,7 @@ export default function Landing(): React.JSX.Element {
 							<Typography variant="h3" fontWeight={800} color="text.primary">
 								HeatGuard
 							</Typography>
-							<Typography variant="body1" color="text.secondary" sx={{ fontSize: 18, lineHeight: 1.0 }}>
+							<Typography variant="body1" color="text.secondary" sx={{ fontSize: 18, lineHeight: 1.8 }}>
 								다양한 데이터 분석을 기반으로 AI가 쿨링포그의 설치 우선순위와 예산을 예측하고 운영까지 지원하는
 								폭염 대응의 기준을 바꾸는 데이터 기반 쿨링포그 통합 관리 시스템 입니다.
 							</Typography>
