@@ -9,9 +9,9 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import { FogSelectDialog } from '@/app/dashboard/notice/create/components/FogSelectDialog';
 
-export function NoticeFogSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+export function NoticeFogSelect({ value, onChange }: { value:  { cf_cd: string; label: string } | null; onChange: (v: { cf_cd: string; label: string } | null) => void;}) {
 	const [open, setOpen] = useState(false);
-	const [selectedFog, setSelectedFog] = useState<string>('');
+
 
 	return (
 		<>
@@ -19,17 +19,17 @@ export function NoticeFogSelect({ value, onChange }: { value: string; onChange: 
 				label="쿨링포그 위치 (선택)"
 				fullWidth
 				size="small"
-				value={value}
+				value={value?.label ?? ''}
 				placeholder="클릭하여 쿨링포그 선택"
 				InputProps={{
 					readOnly: true,
-					endAdornment: selectedFog ? (
+					endAdornment:  value ? (
 						<InputAdornment position="end">
 							<IconButton
 								size="small"
 								onClick={(e) => {
 									e.stopPropagation();
-									onChange('');
+									onChange(null);
 								}}
 							>
 								<ClearIcon fontSize="small" />

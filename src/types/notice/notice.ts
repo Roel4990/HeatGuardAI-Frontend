@@ -40,6 +40,7 @@ export interface NoticeDetail extends BaseNotice {
 	user_nm: string;
 	notice_content: string;
 	notice_file?: NoticeFile;
+	cf_location?: string
 }
 
 /**

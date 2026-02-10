@@ -20,10 +20,11 @@ export function NoticeCreateForm() {
 
   const [title, setTitle] = React.useState('');
   const [category, setCategory] = React.useState('');
-  const [cfCd, setCfCd] = React.useState('');
+  const [cfCd, setCfCd] = React.useState<{ cf_cd: string; label: string } | null>(null);
   const [content, setContent] = React.useState('');
   const [pin, setPin] = React.useState(false);
 	const [noticeFileCd, setNoticeFileCd] = React.useState<number | null>(null);
+
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -42,7 +43,7 @@ export function NoticeCreateForm() {
     const result = await mutateAsync({
       notice_title: title,
       notice_type: category,
-      cf_cd: cfCd,
+			cf_cd: cfCd?.cf_cd ?? '',
       notice_content: content,
       notice_fix_yn: pin,
       notice_file_cd: noticeFileCd,

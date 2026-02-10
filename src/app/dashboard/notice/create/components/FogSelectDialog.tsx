@@ -18,7 +18,7 @@ import CloseIcon from '@mui/icons-material/Close';
 interface Props {
 	open: boolean;
 	onClose: () => void;
-	onSelect: (value: string) => void;
+	onSelect: (value: { cf_cd: string; label: string }) => void;
 }
 
 export function FogSelectDialog({ open, onClose, onSelect }: Props) {
@@ -149,11 +149,12 @@ export function FogSelectDialog({ open, onClose, onSelect }: Props) {
 						>
 							{dongData?.fogs.map((fog) => (
 								<ListItemButton
-									key={fog}
+									key={fog.cf_cd}
 									onClick={() =>
-										onSelect(
-											`${selectedDistrict} ${selectedDong} · ${fog}`
-										)
+										onSelect({
+													cf_cd: fog.cf_cd,
+													label: `${selectedDistrict} ${selectedDong} · ${fog.name}`,
+												})
 									}
 									sx={{
 										borderRadius: 1,
@@ -162,7 +163,7 @@ export function FogSelectDialog({ open, onClose, onSelect }: Props) {
 										},
 									}}
 								>
-									{fog}
+									{fog.name}
 								</ListItemButton>
 							)) ?? (
 								<Typography variant="caption" color="text.secondary">
