@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -23,10 +23,12 @@ const formatNumber = (n?: number | null) =>
 
 function popuColor(level?: string) {
   switch (level) {
+    case '높음':
     case '많음':
       return { bgcolor: '#ffebee', color: '#c62828' };
     case '보통':
       return { bgcolor: '#e3f2fd', color: '#1565c0' };
+    case '낮음':
     case '적음':
       return { bgcolor: '#e8f5e9', color: '#2e7d32' };
     default:
@@ -34,16 +36,31 @@ function popuColor(level?: string) {
   }
 }
 
-function ndviStatus(score?: number | null) {
-  if (typeof score !== 'number') {
-    return { label: '-', color: '#616161', bg: '#f5f5f5' };
+function levelColor(level?: string) {
+  switch (level) {
+    case '높음':
+      return { bgcolor: '#e8f5e9', color: '#2e7d32' };
+    case '보통':
+      return { bgcolor: '#e3f2fd', color: '#1565c0' };
+    case '낮음':
+      return { bgcolor: '#ffebee', color: '#c62828' };
+    default:
+      return { bgcolor: '#f5f5f5', color: '#616161' };
   }
-  if (score <= 50) {
-    return { label: '부족', color: '#c62828', bg: '#ffebee' };
-  }
-  return { label: '양호', color: '#2e7d32', bg: '#e8f5e9' };
 }
 
+function lstLevelColor(level?: string) {
+  switch (level) {
+    case '높음':
+      return { bgcolor: '#ffebee', color: '#c62828' };
+    case '보통':
+      return { bgcolor: '#e3f2fd', color: '#1565c0' };
+    case '낮음':
+      return { bgcolor: '#e8f5e9', color: '#2e7d32' };
+    default:
+      return { bgcolor: '#f5f5f5', color: '#616161' };
+  }
+}
 
 export default function ResultCard({
   item,
@@ -54,6 +71,9 @@ export default function ResultCard({
   onFocus?: () => void;
   displayRank: number;
 }): React.JSX.Element {
+  const ndviLabel = item.reco_loc_ndvi_level ?? '-';
+  const ndviChipStyle = levelColor(item.reco_loc_ndvi_level);
+
   return (
     <Paper
       variant="outlined"
@@ -71,7 +91,7 @@ export default function ResultCard({
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Stack direction="row" spacing={1} alignItems="center">
           <Chip
-            label={`${displayRank}위`}
+            label={`${displayRank}순위`}
             icon={<ReportProblemOutlinedIcon sx={{ color: 'white' }} />}
             sx={{ bgcolor: '#4A60DD', color: 'white', fontWeight: 900, borderRadius: 1.5 }}
           />
@@ -132,47 +152,16 @@ export default function ResultCard({
 
       <Divider sx={{ my: 2 }} />
 
-      {/* 핵심 지표 */}
+      {/* 추천 지표 */}
       <Box
         sx={{
           mt: 0.5,
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 0.5fr' },
           gap: 1.25,
           mb: 2,
         }}
       >
-        <Box sx={{ p: 1.25, borderRadius: 1.5, bgcolor: '#f5f7fb' }}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                bgcolor: '#e8eefc',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: '0 0 auto',
-              }}
-            >
-              <GroupsOutlinedIcon sx={{ fontSize: 20, color: '#546e7a' }} />
-            </Box>
-            <Box sx={{ minWidth: 0, textAlign: 'center', flex: 1 }}>
-              <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                유동인구
-              </Typography>
-              <Box sx={{ mt: 0.25 }}>
-                <Chip
-                  label={item.reco_loc_popu_level ?? '-'}
-                  size="small"
-                  sx={{ ...popuColor(item.reco_loc_popu_level), fontWeight: 800 }}
-                />
-              </Box>
-            </Box>
-          </Stack>
-        </Box>
-
         <Box sx={{ p: 1.25, borderRadius: 1.5, bgcolor: '#f5f7fb' }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Box
@@ -189,13 +178,90 @@ export default function ResultCard({
             >
               <ThermostatOutlinedIcon sx={{ fontSize: 20, color: '#d84315' }} />
             </Box>
-            <Box sx={{ minWidth: 0, textAlign: 'center', flex: 1 }}>
-              <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                체감온도
-              </Typography>
-              <Typography fontWeight={900} sx={{ mt: 0.25 }}>
-                {formatNumber(item.reco_loc_feel_temp)}°C
-              </Typography>
+            <Box
+              sx={{
+                minWidth: 0,
+                flex: 1,
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  체감온도
+                </Typography>
+                <Typography fontWeight={900} sx={{ mt: 0.25 }}>
+                  {formatNumber(item.reco_loc_feel_temp)}°C
+                </Typography>
+              </Box>
+              <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  지표면온도
+                </Typography>
+                <Box sx={{ mt: 0.25 }}>
+                  <Chip
+                    label={item.reco_loc_lst_level ?? '-'}
+                    size="small"
+                    sx={{ ...lstLevelColor(item.reco_loc_lst_level), fontWeight: 800 }}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Stack>
+        </Box>
+
+        <Box sx={{ p: 1.25, borderRadius: 1.5, bgcolor: '#f5f7fb' }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                bgcolor: '#e8eefc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flex: '0 0 auto',
+              }}
+            >
+              <GroupsOutlinedIcon sx={{ fontSize: 20, color: '#546e7a' }} />
+            </Box>
+            <Box
+              sx={{
+                minWidth: 0,
+                flex: 1,
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  유동인구
+                </Typography>
+                <Box sx={{ mt: 0.25 }}>
+                  <Chip
+                    label={item.reco_loc_popu_level ?? '-'}
+                    size="small"
+                    sx={{ ...popuColor(item.reco_loc_popu_level), fontWeight: 800 }}
+                  />
+                </Box>
+              </Box>
+              <Box sx={{ minWidth: 0, textAlign: 'center' }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  취약계층
+                </Typography>
+                <Box sx={{ mt: 0.25 }}>
+                  <Chip
+                    label={item.reco_loc_vulnerable_level ?? '-'}
+                    size="small"
+                    sx={{ ...popuColor(item.reco_loc_vulnerable_level), fontWeight: 800 }}
+                  />
+                </Box>
+              </Box>
             </Box>
           </Stack>
         </Box>
@@ -222,11 +288,11 @@ export default function ResultCard({
               </Typography>
               <Box sx={{ mt: 0.25 }}>
                 <Chip
-                  label={ndviStatus(item.reco_loc_ndvi_score).label}
+                  label={ndviLabel ?? '-'}
                   size="small"
                   sx={{
-                    bgcolor: ndviStatus(item.reco_loc_ndvi_score).bg,
-                    color: ndviStatus(item.reco_loc_ndvi_score).color,
+                    bgcolor: ndviChipStyle.bgcolor,
+                    color: ndviChipStyle.color,
                     fontWeight: 800,
                   }}
                 />
@@ -234,7 +300,6 @@ export default function ResultCard({
             </Box>
           </Stack>
         </Box>
-
       </Box>
 
       {/* 추천 사유 */}
@@ -253,11 +318,22 @@ export default function ResultCard({
         </Typography>
 
         <Stack spacing={0.75}>
-          {(item.reco_loc_desc && item.reco_loc_desc.length > 0
-            ? item.reco_loc_desc
-            : ['추천 사유 데이터가 없습니다']
-          ).map((text) => (
-            <Stack key={text} direction="row" spacing={1} alignItems="flex-start">
+          {(() => {
+            const base =
+              item.reco_loc_desc && item.reco_loc_desc.length > 0
+                ? item.reco_loc_desc
+                : ['추천 사유 데이터가 없습니다'];
+            const padded = [...base];
+            while (padded.length < 4) padded.push('');
+            return padded.slice(0, 4);
+          })().map((text, idx) => (
+            <Stack
+              key={`${idx}-${text}`}
+              direction="row"
+              spacing={1}
+              alignItems="flex-start"
+              sx={{ opacity: text ? 1 : 0 }}
+            >
               <CheckCircleOutlineIcon sx={{ color: '#1565c0', fontSize: 18, mt: '2px' }} />
               <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600 }}>
                 {text}
