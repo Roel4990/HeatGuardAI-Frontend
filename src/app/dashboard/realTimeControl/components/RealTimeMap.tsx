@@ -1,25 +1,27 @@
-"use client";
+﻿"use client";
 
 import * as React from 'react';
 import Script from 'next/script';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { coolingFogs, type CoolingFogData } from '@/dummydata/cooling-fogs';
+import type { CoolingFogListItem } from '@/types/realTimeControl/real-time-control';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NaverMap = any;
 
 type RealTimeMapProps = {
-	onSelectCoolingFog: (fog: CoolingFogData) => void;
+	coolingFogList: CoolingFogListItem[];
+	onSelectCoolingFog: (cfCd: string) => void;
 };
 
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
 const MARKER_IMG = '/assets/marker.svg';
 
-export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
+export function RealTimeMap({ coolingFogList, onSelectCoolingFog }: RealTimeMapProps): React.JSX.Element {
 	const mapContainerRef = React.useRef<HTMLDivElement | null>(null);
 	const mapRef = React.useRef<NaverMap | null>(null);
+	const markersRef = React.useRef<NaverMap[]>([]);
 	const [isScriptReady, setIsScriptReady] = React.useState(false);
 
 	const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
@@ -36,12 +38,26 @@ export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX
 			center: new naver.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng),
 			zoom: 13,
 		});
+		mapRef.current = map;
+	}, [isScriptReady]);
 
-		// Marker click -> notify parent to update the info panel.
-		for (const fog of coolingFogs) {
+	React.useEffect(() => {
+		if (!mapRef.current) return;
+		// eslint-disable-next-line unicorn/prefer-global-this
+		const naver = window.naver;
+		if (!naver?.maps) return;
+
+		// 기존 마커 제거
+		for (const marker of markersRef.current) {
+			marker.setMap(null);
+		}
+		markersRef.current = [];
+
+		// 새 마커 생성
+		for (const fog of coolingFogList) {
 			const marker = new naver.maps.Marker({
 				position: new naver.maps.LatLng(fog.lat, fog.lng),
-				map,
+				map: mapRef.current,
 				icon: {
 					url: MARKER_IMG,
 					size: new naver.maps.Size(32, 32),
@@ -52,12 +68,12 @@ export function RealTimeMap({ onSelectCoolingFog }: RealTimeMapProps): React.JSX
 			});
 
 			naver.maps.Event.addListener(marker, 'click', () => {
-				onSelectCoolingFog(fog);
+				onSelectCoolingFog(fog.cf_cd);
 			});
-		}
 
-		mapRef.current = map;
-	}, [isScriptReady, onSelectCoolingFog]);
+			markersRef.current.push(marker);
+		}
+	}, [coolingFogList, onSelectCoolingFog]);
 
 	return (
 		<div style={{ position: 'relative', height: '100%', width: '100%' }}>
