@@ -1,34 +1,29 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import {
   Box,
   Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  CircularProgress,
   Divider,
   IconButton,
   Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import TipsAndUpdatesOutlinedIcon from "@mui/icons-material/TipsAndUpdatesOutlined";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import PrintIcon from "@mui/icons-material/Print";
-import CloseIcon from "@mui/icons-material/Close";
+import ReportDialog from "@/app/dashboard/budgetSimulation/components/documents/report-dialog";
+import RecDialog from "@/app/dashboard/budgetSimulation/components/documents/rec-dialog";
+import A4Shell from "@/app/dashboard/budgetSimulation/components/documents/a4-shell";
+import ReportSections from "@/app/dashboard/budgetSimulation/components/documents/report-sections";
+import RecSections from "@/app/dashboard/budgetSimulation/components/documents/rec-sections";
+import type { BudgetItemLike, RecommendationText, ReportContent, ReportSnapshot } from "@/types/budgetSimulation/documents";
 
 export type LocationType =
   | "전체"
@@ -41,16 +36,6 @@ export type LocationType =
   | "취약시설 주변"
   | "공공시설";
 
-export type BudgetItemLike = {
-  code: string;
-  name: string;
-  unitPrice: number;
-  elecMonthly: number;
-  waterMonthly: number;
-  loc: string;
-  qty: number;
-};
-
 export type AIDocumentsPanelProps = {
   years: number;
   budget: number;
@@ -59,6 +44,7 @@ export type AIDocumentsPanelProps = {
 };
 
 type DocStatus = "idle" | "ready";
+type ReportText = ReturnType<typeof buildReportDummyText>;
 const MAX_QTY = 99;
 
 function formatKRW(n: number) {
@@ -91,83 +77,6 @@ function normalizeLocTags(loc: string): Set<LocationType> {
   return tags;
 }
 
-function A4Shell(props: { title: string; children: React.ReactNode }) {
-  return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: { xs: 2, md: 3 },
-        borderRadius: 2.5,
-        bgcolor: "background.paper",
-        borderColor: "divider",
-        maxWidth: 920,
-        mx: "auto",
-      }}
-    >
-      <Typography variant="h6" fontWeight={900} sx={{ letterSpacing: "-0.02em" }}>
-        {props.title}
-      </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ display: "block", mt: 0.5, lineHeight: 1.6 }}
-      >
-        (POC) API 없이 더미 문장/계산으로 즉시 생성되는 화면 예시입니다.
-      </Typography>
-      <Divider sx={{ my: 2 }} />
-      {props.children}
-    </Paper>
-  );
-}
-
-function DenseTable(props: {
-  head: string[];
-  rows: Array<Array<string | number>>;
-  footer?: Array<string | number>;
-}) {
-  const { head, rows, footer } = props;
-  return (
-    <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            {head.map((h, idx) => (
-              <TableCell key={idx} sx={{ fontWeight: 900, bgcolor: "rgba(0,0,0,0.02)" }}>
-                {h}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((r, i) => (
-            <TableRow key={i} hover>
-              {r.map((c, j) => (
-                <TableCell key={j} align={typeof c === "number" ? "right" : "left"}>
-                  {typeof c === "number" ? formatKRW(c) : c}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-
-          {footer && (
-            <TableRow sx={{ bgcolor: "rgba(76,175,80,0.10)" }}>
-              {footer.map((c, j) => (
-                <TableCell
-                  key={j}
-                  sx={{ fontWeight: 900 }}
-                  align={typeof c === "number" ? "right" : "left"}
-                >
-                  {typeof c === "number" ? formatKRW(c) : c}
-                </TableCell>
-              ))}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-
 function buildReportDummyText(args: {
   years: number;
   budget: number;
@@ -178,7 +87,7 @@ function buildReportDummyText(args: {
   remain: number;
   topOpex?: { name: string; ratioPct: number };
 }) {
-  const { years, budget, sumTotal, usagePct, remain, topOpex } = args;
+  const { years, budget, sumInit, sumTotal, usagePct, remain, topOpex } = args;
 
   const budgetLine =
     budget > 0
@@ -201,8 +110,18 @@ function buildReportDummyText(args: {
     : `운영비 관리 포인트: 연간 운영비(B)는 운영기간 증가에 따라 누적 비용에 영향을 미칩니다.`;
 
   return {
+    businessOverview: `본 사업은 폭염 대응을 위해 쿨링포그를 설치하여 시민 체감온도 저감과 건강 보호를 도모하는 것을 목적으로 합니다. 쿨링포그 설치를 통해 보행·체류 구간의 열환경 개선 효과를 기대할 수 있습니다.`,
     overview: `본 보고서는 선택된 품목 및 설치 수량을 기준으로 초기 설치비(A)와 연간 운영비(B)를 산정하고, 운영기간 ${years}년 기준 총 소요 예산(C)을 검토하기 위해 작성되었습니다.`,
     conclusion: `${budgetLine} ${remainLine}`.trim(),
+    initCostAssessment: `초기 설치비 합계(A)는 ${formatKRW(sumInit)}이며, 가용 예산 ${formatKRW(
+      budget
+    )} 대비 사용률 ${usagePct.toFixed(1)}% 수준으로 산정됩니다. 예산 잔여/부족 금액 ${formatKRW(
+      remain
+    )}을 고려할 때 초기 설치비는 예산 범위 내 합리적인 수준으로 판단됩니다.`,
+    totalCostAnalysis: `운영기간 ${years}년 기준 총 소요 예산(C)은 초기 설치비(A)와 연간 운영비(B)의 누적 합으로 산정되며, 운영기간이 증가할수록 운영비 누적 영향이 확대됩니다.`,
+    expectedEffect: `예산 집행을 통해 고온 취약 구간의 체감온도 저감 및 시민 체감 개선 효과를 기대할 수 있습니다. 특히 보행 동선 및 체류 공간 중심의 설치는 정책 효과를 높일 것으로 판단됩니다.`,
+    riskManagement: `리스크 요인으로는 운영비 증가, 현장 여건 변화, 유지관리 부담이 있으며, 운영비 추이 모니터링 및 설치 우선순위 재조정 등 관리 방안을 병행할 필요가 있습니다.`,
+    finalOpinion: `종합적으로 본 구성(안)은 예산 범위 내에서 추진 가능성이 있으며, 단계적 집행과 성과 모니터링을 병행하는 것이 적절합니다.`,
     opexPoint: opexLine,
     notice: `본 문서는 입력 정보 기반의 참고 자료이며, 실제 집행 시에는 현장 여건 및 내부 검토 절차를 우선합니다.`,
   };
@@ -246,111 +165,6 @@ function buildRecommendationDummyText(args: {
   };
 }
 
-// ---- 복사/인쇄 유틸 (Deprecated 제거) ----
-
-// 1) Clipboard: execCommand 제거 → 실패 시 "수동 복사용 다이얼로그"로 유도
-async function copyToClipboardSafe(text: string) {
-  // Secure Context(https/localhost) + 권한이 있으면 clipboard API 사용
-  if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return { ok: true as const, reason: "" };
-    } catch (e: any) {
-      return { ok: false as const, reason: e?.message ?? "clipboard.writeText 실패" };
-    }
-  }
-  return { ok: false as const, reason: "클립보드 API 사용 불가(비보안 컨텍스트 또는 미지원)" };
-}
-
-// 2) Print: document.write/doc.open/doc.close 제거 → iframe.srcdoc 사용 + lang 추가
-function buildPrintDoc(title: string, bodyHtml: string) {
-  // ✅ lang 속성 추가(경고 해결)
-  return `<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>${escapeHtml(title)}</title>
-  <style>
-    @page { size: A4; margin: 14mm; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif; color: #111; }
-    .page { max-width: 900px; margin: 0 auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
-    th { background: #f6f7f9; text-align: left; }
-    h2 { margin: 0 0 8px 0; font-size: 18px; }
-    h3 { margin: 18px 0 8px 0; font-size: 14px; }
-    p { margin: 6px 0; line-height: 1.65; font-size: 13px; }
-    ul { margin: 6px 0 0 18px; }
-    li { margin: 4px 0; line-height: 1.6; font-size: 13px; }
-  </style>
-</head>
-<body>
-  <div class="page">${bodyHtml}</div>
-</body>
-</html>`;
-}
-
-function escapeHtml(s: string) {
-  return s
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function printHtml(title: string, html: string) {
-  // 팝업 없이 인쇄: hidden iframe 사용 (팝업 차단 영향 없음)
-  const iframe = document.createElement("iframe");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "0";
-  iframe.setAttribute("title", title);
-
-  // ✅ doc.write deprecated 회피: srcdoc 사용
-  iframe.srcdoc = buildPrintDoc(title, html);
-
-  const cleanup = () => {
-    try {
-      iframe.onload = null;
-      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    } catch {
-      /* noop */
-    }
-  };
-
-  iframe.onload = () => {
-    const win = iframe.contentWindow;
-    if (!win) {
-      cleanup();
-      return;
-    }
-
-    // Safari/일부 환경 대응: 약간의 딜레이가 안정적
-    setTimeout(() => {
-      try {
-        win.focus();
-        win.print();
-      } finally {
-        // 인쇄 다이얼로그 띄운 뒤 iframe 제거
-        setTimeout(cleanup, 300);
-      }
-    }, 50);
-  };
-
-  document.body.appendChild(iframe);
-}
-
-function tsvTable(head: string[], rows: Array<Array<string | number>>) {
-  const h = head.join("\t");
-  const r = rows.map((row) => row.map(String).join("\t")).join("\n");
-  return `${h}\n${r}`;
-}
-
 export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
   const { years, budget, pickedItems, allItems } = props;
 
@@ -369,6 +183,14 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
 
   const [types, setTypes] = React.useState<Set<LocationType>>(() => new Set([ALL]));
   const selectedTypesArr = React.useMemo(() => Array.from(types), [types]);
+  const selectedTypesLabel = React.useMemo(
+    () => (selectedTypesArr.includes(ALL) ? TYPES.filter((t) => t !== ALL).join(", ") : selectedTypesArr.join(", ")),
+    [selectedTypesArr]
+  );
+  const selectedTypesForReport = React.useMemo(
+    () => (selectedTypesArr.includes(ALL) ? TYPES.filter((t) => t !== ALL) : selectedTypesArr),
+    [selectedTypesArr]
+  );
 
   const toggleType = (t: LocationType) => {
     setTypes((prev) => {
@@ -528,143 +350,130 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
   );
 
   // ----- UI state -----
-  const canGenerate = budget > 0;
+  const canGenerate = budget > 0 && pickedItems.length > 0;
   const [reportStatus, setReportStatus] = React.useState<DocStatus>("idle");
   const [reportOpen, setReportOpen] = React.useState(false);
+  const [reportLoading, setReportLoading] = React.useState(false);
+  const [reportAi, setReportAi] = React.useState<ReportContent | null>(null);
+  const [reportSnapshot, setReportSnapshot] = React.useState<ReportText | null>(null);
+  const [reportSnapshotMeta, setReportSnapshotMeta] = React.useState<ReportSnapshot | null>(null);
 
   const [recStatus, setRecStatus] = React.useState<DocStatus>("idle");
   const [recOpen, setRecOpen] = React.useState(false);
+  const [recSnapshot, setRecSnapshot] = React.useState<RecommendationText | null>(null);
 
   const reportA4Ref = React.useRef<HTMLDivElement | null>(null);
   const recA4Ref = React.useRef<HTMLDivElement | null>(null);
 
-  // ✅ 복사 실패 대비: 수동 복사 다이얼로그
-  const [copyOpen, setCopyOpen] = React.useState(false);
-  const [copyTitle, setCopyTitle] = React.useState("");
-  const [copyPayload, setCopyPayload] = React.useState("");
-
-  const openManualCopy = (title: string, text: string) => {
-    setCopyTitle(title);
-    setCopyPayload(text);
-    setCopyOpen(true);
+  const resetDocs = () => {
+    setReportStatus("idle");
+    setReportOpen(false);
+    setReportAi(null);
+    setReportSnapshot(null);
+    setReportSnapshotMeta(null);
+    setRecStatus("idle");
+    setRecOpen(false);
+    setRecSnapshot(null);
   };
 
-  const genReport = () => {
-    setReportStatus("ready");
-    setReportOpen(true);
+  const genReport = async () => {
+    if (!canGenerate || reportLoading) return;
+    setReportStatus("idle");
+    setReportSnapshot(reportText);
+    setReportAi(null);
+    setReportSnapshotMeta({
+      years,
+      budget,
+      selectedTypesLabel,
+      pickedItems: pickedItems.map((it) => ({ ...it })),
+      sumInit,
+      sumAnnual,
+      sumTotal,
+      usagePct,
+      remain,
+      topOpex: topOpex ?? undefined,
+    });
+    setReportLoading(true);
+    try {
+      const res = await axios.post("/api/budgetSimulation/report", {
+        years,
+        budget,
+        sumInit,
+        sumAnnual,
+        sumTotal,
+        usagePct,
+        remain,
+        topOpex: topOpex ?? undefined,
+        locationTypes: selectedTypesForReport,
+        items: pickedItems.map((it) => ({
+          name: it.name,
+          unitPrice: it.unitPrice,
+          elecMonthly: it.elecMonthly,
+          waterMonthly: it.waterMonthly,
+          qty: it.qty,
+        })),
+      });
+      console.log("[budgetSimulation/report] response", res?.data);
+      const report = res?.data?.report;
+      if (report && report.businessOverview && report.overview && report.conclusion) {
+        setReportAi(report);
+      }
+      setReportStatus("ready");
+      setReportOpen(true);
+    } catch {
+      console.log("[budgetSimulation/report] request failed");
+      setReportStatus("ready");
+      setReportOpen(true);
+    } finally {
+      setReportLoading(false);
+    }
   };
   const genRec = () => {
+    setRecSnapshot(recText);
     setRecStatus("ready");
     setRecOpen(true);
   };
 
   // ----- 복사용 텍스트 생성 -----
-  const reportCopyText = React.useMemo(() => {
-    const aHead = ["구분", "품목명", "품목 단가", "수량", "단품 합계"];
-    const aRows = pickedItems.map((it, idx) => [
-      String(idx + 1),
-      it.name,
-      String(it.unitPrice),
-      `${it.qty}대`,
-      String(it.unitPrice * it.qty),
-    ]);
-
-    const bHead = ["구분", "품목명", "월 전기세", "월 수도세", "수량", "연간 합계"];
-    const bRows = pickedItems.map((it, idx) => {
-      const annual = calcAnnualPerUnit(it) * it.qty;
-      return [String(idx + 1), it.name, String(it.elecMonthly), String(it.waterMonthly), `${it.qty}대`, String(annual)];
-    });
-
-    return [
-      "설치 예산 검토 보고서 (POC)",
-      "",
-      "1. 예산 검토 개요",
-      reportText.overview,
-      reportText.conclusion,
-      "",
-      "2. 초기 설치비 산정 내역 (A)",
-      tsvTable(aHead, aRows),
-      `합계\t\t\t${pickedItems.reduce((a, x) => a + x.qty, 0)}대\t${sumInit}`,
-      "",
-      "3. 예상 연간 운영비 산정 내역 (B, 1년 기준)",
-      tsvTable(bHead, bRows),
-      `합계\t\t\t\t${pickedItems.reduce((a, x) => a + x.qty, 0)}대\t${sumAnnual}`,
-      "",
-      "4. 운영비 관리 포인트",
-      reportText.opexPoint,
-      "",
-      reportText.notice,
-    ].join("\n");
-  }, [pickedItems, reportText, sumInit, sumAnnual]);
-
-  const recCopyText = React.useMemo(() => {
-    const head = ["구분", "품목명", "권장/매칭 설치", "수량", "초기 설치비(A)", "연간 운영비(B)"];
-    const rows = recPlan.items.map((it: any, idx: number) => [
-      String(idx + 1),
-      it.name,
-      it.matchedTypesText,
-      `${it.qty}대`,
-      String(it.initCostTotal),
-      String(it.annualCostTotal),
-    ]);
-
-    const lt = selectedTypesArr.includes("전체") ? "전체" : selectedTypesArr.join(", ");
-
-    return [
-      "예산 범위 내 구성 방안 추천서 (POC)",
-      "",
-      "설치 위치 유형",
-      lt,
-      "",
-      "1. 추천 산정 개요",
-      recText.intro,
-      "",
-      "2. 추천 산정 기준",
-      recText.basis,
-      "",
-      "3. 추천 구성 내역",
-      tsvTable(head, rows),
-      `합계\t\t\t${recPlan.totalQty}대\t${recPlan.sumInit}\t${recPlan.sumAnnual}`,
-      "",
-      "4. 예산 반영 결과",
-      recText.result,
-      "",
-      "5. 전문가 인사이트(3개)",
-      `- ${recText.insights[0]}`,
-      `- ${recText.insights[1]}`,
-      `- ${recText.insights[2]}`,
-      "",
-      "6. 더 나은 방안(검토 방향)",
-      recText.betterPlan,
-      "",
-      "7. 구성 특징 및 유의사항",
-      recText.note,
-      "",
-      "고지",
-      "본 문서는 예산 운용 검토를 위한 참고 자료이며, 실제 설치 및 예산 집행 시에는 내부 검토 절차를 우선합니다.",
-    ].join("\n");
-  }, [recPlan, recText, selectedTypesArr]);
-
-  // ----- 인쇄(현재 A4 영역 html만) -----
-  const handlePrintReport = () => {
-    const html = reportA4Ref.current?.innerHTML ?? "";
-    if (!html) return;
-    printHtml("설치 예산 검토 보고서", html);
+  const reportTextEffective: ReportContent | ReportText = reportAi ?? reportSnapshot ?? reportText;
+  const recTextEffective = recSnapshot ?? recText;
+  const reportView = reportSnapshotMeta ?? {
+    years,
+    budget,
+    selectedTypesLabel,
+    pickedItems,
+    sumInit,
+    sumAnnual,
+    sumTotal,
+    usagePct,
+    remain,
+    topOpex: topOpex ?? undefined,
   };
-  const handlePrintRec = () => {
-    const html = recA4Ref.current?.innerHTML ?? "";
-    if (!html) return;
-    printHtml("구성 방안 추천서", html);
-  };
+  const reportUsageColor = reportView.remain < 0 ? "rgba(229,57,53,0.75)" : "rgba(25,118,210,0.7)";
+  const reportUsageBgColor = reportView.remain < 0 ? "rgba(229,57,53,0.18)" : "rgba(25,118,210,0.15)";
+  const expectedEffectLines = React.useMemo(
+    () =>
+      Array.isArray(reportTextEffective.expectedEffect)
+        ? reportTextEffective.expectedEffect.map((line) => String(line).trim()).filter(Boolean)
+        : [],
+    [reportTextEffective.expectedEffect]
+  );
+  const riskItems = React.useMemo(
+    () =>
+      Array.isArray(reportTextEffective.riskManagement)
+        ? reportTextEffective.riskManagement
+            .map((item) => ({
+              risk: String(item?.risk ?? "").trim(),
+              mitigation: String(item?.mitigation ?? "").trim(),
+            }))
+            .filter((item) => item.risk || item.mitigation)
+        : [],
+    [reportTextEffective.riskManagement]
+  );
 
-  // ----- 복사 핸들러 (execCommand 제거) -----
-  const handleCopy = async (title: string, text: string) => {
-    const res = await copyToClipboardSafe(text);
-    if (!res.ok) {
-      // 클립보드 실패 시: 수동 복사 다이얼로그 제공(Deprecated API 사용 안 함)
-      openManualCopy(`${title} (수동 복사)`, text);
-    }
-  };
+  // 복사용 텍스트 제거
+
+  // 복사/인쇄 기능 제거
 
   return (
     <>
@@ -693,17 +502,17 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
                   설치 유형 선택 후 문서를 생성해 확인합니다.
                 </Typography>
               </Box>
-              <Tooltip title={canGenerate ? "보고서/추천서 새로고침" : "예산 입력 후 사용 가능합니다."}>
+              <Tooltip title={canGenerate ? "보고서 새로고침" : "예산 입력 및 품목 선택 후 사용 가능합니다."}>
                 <span>
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      genReport();
-                      genRec();
-                    }}
-                    disabled={!canGenerate}
-                    sx={{ border: "1px solid", borderColor: "divider", bgcolor: "background.paper" }}
-                  >
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        resetDocs();
+                        void genReport();
+                      }}
+                      disabled={!canGenerate}
+                      sx={{ border: "1px solid", borderColor: "divider", bgcolor: "background.paper" }}
+                    >
                     <RefreshIcon fontSize="small" />
                   </IconButton>
                 </span>
@@ -719,20 +528,28 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
             <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: "wrap" }}>
               {TYPES.map((t) => {
                 const isSel = types.has(t);
-                const isAll = t === ALL;
-
                 return (
                   <Chip
                     key={t}
                     label={t}
                     size="small"
-                    color={isSel ? "success" : "default"}
+                    color={isSel ? "primary" : "default"}
                     variant={isSel ? "filled" : "outlined"}
                     onClick={() => toggleType(t)}
                     sx={{
                       height: 28,
                       fontWeight: 800,
-                      ...(isAll && isSel ? { bgcolor: "rgba(46,125,50,0.18)" } : null),
+                      "&:hover": {
+                        bgcolor: isSel ? "rgba(59,130,246,0.24)" : "rgba(59,130,246,0.08)",
+                        borderColor: "rgba(59,130,246,0.45)",
+                      },
+                      ...(isSel
+                        ? {
+                            bgcolor: "rgba(59,130,246,0.18)",
+                            borderColor: "rgba(59,130,246,0.45)",
+                            color: "#1D4ED8",
+                          }
+                        : null),
                     }}
                   />
                 );
@@ -766,18 +583,18 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
 
               </>
             ) : (
-              <Tooltip title={canGenerate ? "" : "예산 입력 후 생성 가능합니다."}>
+              <Tooltip title={canGenerate ? "보고서 생성하기" : "예산 입력 및 품목 선택 후 생성 가능합니다."}>
                 <span style={{ display: "block", width: "100%" }}>
-                  <Button
-                    startIcon={<DescriptionOutlinedIcon />}
-                    variant="outlined"
-                    onClick={genReport}
-                    disabled={!canGenerate}
-                    fullWidth
-                    sx={{ minWidth: 0 }}
-                  >
-                    보고서 생성
-                  </Button>
+                    <Button
+                      startIcon={reportLoading ? <CircularProgress size={16} /> : <DescriptionOutlinedIcon />}
+                      variant="outlined"
+                      onClick={() => void genReport()}
+                      disabled={!canGenerate || reportLoading}
+                      fullWidth
+                      sx={{ minWidth: 0 }}
+                    >
+                      {reportLoading ? "보고서 생성 중" : "보고서 생성"}
+                    </Button>
                 </span>
               </Tooltip>
             )}
@@ -798,7 +615,7 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
 
               </>
             ) : (
-              <Tooltip title={canGenerate ? "" : "예산 입력 후 생성 가능합니다."}>
+              <Tooltip title={canGenerate ? "추천서 생성하기" : "예산 입력 및 품목 선택 후 생성 가능합니다."}>
                 <span style={{ display: "block", width: "100%" }}>
                   <Button
                     startIcon={<TipsAndUpdatesOutlinedIcon />}
@@ -821,279 +638,46 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
         </Stack>
       </Paper>
 
-      {/* ---------------- 수동 복사 Dialog (fallback) ---------------- */}
-      <Dialog open={copyOpen} onClose={() => setCopyOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ fontWeight: 900 }}>{copyTitle}</DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
-            클립보드 자동 복사가 불가하여 수동 복사로 제공됩니다. 아래 내용을 드래그/선택 후 복사하세요.
-          </Typography>
-          <Box
-            component="textarea"
-            value={copyPayload}
-            readOnly
-            style={{
-              width: "100%",
-              minHeight: 360,
-              padding: 12,
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-              fontSize: 12,
-              lineHeight: 1.5,
-              resize: "vertical",
-            }}
-            onFocus={(e: any) => e.currentTarget.select?.()}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCopyOpen(false)}>닫기</Button>
-        </DialogActions>
-      </Dialog>
-
       {/* ---------------- 보고서 Dialog ---------------- */}
-      <Dialog open={reportOpen} onClose={() => setReportOpen(false)} maxWidth="lg" fullWidth>
-        <DialogTitle sx={{ fontWeight: 900 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography fontWeight={900}>설치 예산 검토 보고서</Typography>
-            </Box>
-
-            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexShrink: 0 }}>
-              <Tooltip title="복사">
-                <IconButton size="small" onClick={() => handleCopy("설치 예산 검토 보고서", reportCopyText)}>
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="인쇄">
-                <IconButton size="small" onClick={handlePrintReport}>
-                  <PrintIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="닫기">
-                <IconButton size="small" onClick={() => setReportOpen(false)}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-          </Stack>
-        </DialogTitle>
-
-        <DialogContent dividers>
-          <div ref={reportA4Ref}>
-            <A4Shell title="설치 예산 검토 보고서">
-              <Stack spacing={2}>
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    1. 예산 검토 개요
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {reportText.overview}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.75 }}>
-                    {reportText.conclusion}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 1 }}>
-                    2. 초기 설치비 산정 내역 (A)
-                  </Typography>
-
-                  {pickedItems.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                      선택된 품목이 없습니다. (품목 선택 후 수량을 입력하세요)
-                    </Typography>
-                  ) : (
-                    <DenseTable
-                      head={["구분", "품목명", "품목 단가", "수량", "단품 합계"]}
-                      rows={pickedItems.map((it, idx) => [
-                        String(idx + 1),
-                        it.name,
-                        it.unitPrice,
-                        `${it.qty}대`,
-                        it.unitPrice * it.qty,
-                      ])}
-                      footer={["", "합계", "", `${pickedItems.reduce((a, x) => a + x.qty, 0)}대`, sumInit]}
-                    />
-                  )}
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 1 }}>
-                    3. 예상 연간 운영비 산정 내역 (B, 1년 기준)
-                  </Typography>
-
-                  {pickedItems.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                      선택된 품목이 없습니다.
-                    </Typography>
-                  ) : (
-                    <DenseTable
-                      head={["구분", "품목명", "월 전기세", "월 수도세", "수량", "연간 합계"]}
-                      rows={pickedItems.map((it, idx) => {
-                        const annual = calcAnnualPerUnit(it) * it.qty;
-                        return [String(idx + 1), it.name, it.elecMonthly, it.waterMonthly, `${it.qty}대`, annual];
-                      })}
-                      footer={["", "합계", "", "", `${pickedItems.reduce((a, x) => a + x.qty, 0)}대`, sumAnnual]}
-                    />
-                  )}
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    4. 운영비 관리 포인트
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {reportText.opexPoint}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6, display: "block" }}>
-                    {reportText.notice}
-                  </Typography>
-                </Box>
-              </Stack>
-            </A4Shell>
-          </div>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={genReport}>AI에게 문서 재요청하기</Button>
-        </DialogActions>
-      </Dialog>
+      <ReportDialog
+        open={reportOpen}
+        title="쿨링포그 설치 예산 검토 보고서"
+        onClose={() => setReportOpen(false)}
+        onRegenerate={() => void genReport()}
+      >
+        <div ref={reportA4Ref}>
+          <A4Shell title="쿨링포그 설치 예산 검토 보고서">
+            <ReportSections
+              reportText={reportTextEffective}
+              reportView={reportView}
+              expectedEffectLines={expectedEffectLines}
+              riskItems={riskItems}
+              formatKRW={formatKRW}
+              calcAnnualPerUnit={calcAnnualPerUnit}
+              reportUsageColor={reportUsageColor}
+              reportUsageBgColor={reportUsageBgColor}
+            />
+          </A4Shell>
+        </div>
+      </ReportDialog>
 
       {/* ---------------- 추천서 Dialog ---------------- */}
-      <Dialog open={recOpen} onClose={() => setRecOpen(false)} maxWidth="lg" fullWidth>
-        <DialogTitle sx={{ fontWeight: 900 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography fontWeight={900}>예산 범위 내 구성 방안 추천서</Typography>
-            </Box>
-
-            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexShrink: 0 }}>
-              <Tooltip title="복사">
-                <IconButton size="small" onClick={() => handleCopy("예산 범위 내 구성 방안 추천서", recCopyText)}>
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="인쇄">
-                <IconButton size="small" onClick={handlePrintRec}>
-                  <PrintIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="닫기">
-                <IconButton size="small" onClick={() => setRecOpen(false)}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-          </Stack>
-        </DialogTitle>
-
-        <DialogContent dividers>
-          <div ref={recA4Ref}>
-            <A4Shell title="예산 범위 내 구성 방안 추천서">
-              <Stack spacing={2}>
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    1. 추천 산정 개요
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {recText.intro}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    2. 추천 산정 기준
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {recText.basis}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 1 }}>
-                    3. 추천 구성 내역
-                  </Typography>
-
-                  {recPlan.items.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                      추천 구성을 산정할 수 없습니다. (예산 또는 설치 유형 조건을 확인하세요)
-                    </Typography>
-                  ) : (
-                    <DenseTable
-                      head={["구분", "품목명", "권장/매칭 설치", "수량", "초기 설치비(A)", "연간 운영비(B)"]}
-                      rows={recPlan.items.map((it: any, idx: number) => [
-                        String(idx + 1),
-                        it.name,
-                        it.matchedTypesText,
-                        `${it.qty}대`,
-                        it.initCostTotal,
-                        it.annualCostTotal,
-                      ])}
-                      footer={["", "합계", "", `${recPlan.totalQty}대`, recPlan.sumInit, recPlan.sumAnnual]}
-                    />
-                  )}
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    4. 예산 반영 결과
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {recText.result}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    5. 전문가 인사이트(3개)
-                  </Typography>
-                  <Box component="ul" sx={{ m: 0, pl: 2.25 }}>
-                    {recText.insights.map((t, i) => (
-                      <Typography key={i} component="li" variant="body2" sx={{ lineHeight: 1.75, mb: 0.25 }}>
-                        {t}
-                      </Typography>
-                    ))}
-                  </Box>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    6. 더 나은 방안(검토 방향)
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {recText.betterPlan}
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography fontWeight={900} sx={{ mb: 0.75 }}>
-                    7. 구성 특징 및 유의사항
-                  </Typography>
-                  <Typography variant="body2" sx={{ lineHeight: 1.75 }}>
-                    {recText.note}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: "block", mt: 0.75, lineHeight: 1.6 }}
-                  >
-                    본 문서는 예산 운용 검토를 위한 참고 자료이며, 실제 설치 및 예산 집행 시에는 내부 검토 절차를 우선합니다.
-                  </Typography>
-                </Box>
-              </Stack>
-            </A4Shell>
-          </div>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={genRec}>AI에게 문서 재요청하기</Button>
-        </DialogActions>
-      </Dialog>
+      <RecDialog
+        open={recOpen}
+        title="예산 범위 내 구성 방안 추천서"
+        onClose={() => setRecOpen(false)}
+        onRegenerate={genRec}
+      >
+        <div ref={recA4Ref}>
+          <A4Shell title="예산 범위 내 구성 방안 추천서">
+            <RecSections recText={recTextEffective} recPlan={recPlan} />
+          </A4Shell>
+        </div>
+      </RecDialog>
     </>
   );
 }
+
+
+
+
