@@ -6,11 +6,23 @@ import { Paper, Container } from "@mui/material";
 
 import { RealTimeInfoPanel } from './RealTimeInfoPanel';
 import { RealTimeMap } from './RealTimeMap';
-import type { CoolingFogData } from '@/dummydata/cooling-fogs';
 import { RealTimeControlHeader } from "./RealTimeControlHeader";
 
+import { useCoolingFogListMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-list-query';
+import { useCoolingFogDetailMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-detail-query';
+import type { CoolingFogDetailData } from '@/types/realTimeControl/real-time-control';
+
 export function RealTimeControlLayout(): React.JSX.Element {
-	const [selectedCoolingFog, setSelectedCoolingFog] = React.useState<CoolingFogData | null>(null);
+	const { mutate: fetchCoolingFogList, data: listData } = useCoolingFogListMutation();
+	const detailMutation = useCoolingFogDetailMutation();
+
+	const coolingFogList = listData?.data?.cf_list ?? [];
+	console.log("coolingFogList length", coolingFogList.length);
+	const selectedCoolingFog = detailMutation.data?.data ?? null;
+
+	React.useEffect(() => {
+		fetchCoolingFogList();
+	}, [fetchCoolingFogList]);
 
 	return (
 		<Container maxWidth="lg" sx={{ py: 4 }}>
@@ -25,7 +37,10 @@ export function RealTimeControlLayout(): React.JSX.Element {
 						borderRadius: 2,
 					}}
 				>
-					<RealTimeMap onSelectCoolingFog={setSelectedCoolingFog} />
+					<RealTimeMap
+						coolingFogList={coolingFogList}
+						onSelectCoolingFog={(cfCd) => detailMutation.mutate(cfCd)}
+					/>
 				</Paper>
 				<RealTimeInfoPanel selectedCoolingFog={selectedCoolingFog} />
 			</Stack>
