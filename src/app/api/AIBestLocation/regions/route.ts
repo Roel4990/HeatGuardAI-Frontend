@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
 
   try {
     const authHeader = request.headers.get("authorization") ?? undefined;
-    console.log("Regions API auth header:", authHeader);
     const response = await axios.get(`${API_BASE_URL}/api/regions`, {
       headers: authHeader ? { Authorization: authHeader } : undefined,
     });
 
+    console.log("행정구, 동 조회 성공")
     return NextResponse.json(response.data.data);
   } catch (error) {
     console.error("Regions API route error:", error);
