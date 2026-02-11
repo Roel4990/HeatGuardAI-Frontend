@@ -5,15 +5,17 @@ import { Box, Typography, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNoticeFileUploadMutation } from "@/hooks/mutations/noticeFileUpload/use-notice-file-upload-mutation";
 
 const ACCEPTED_TYPES = new Set(['image/png', 'image/jpeg', 'application/pdf']);
 
-export function NoticeFileUpload() {
+export function NoticeFileUpload({ onUploaded }: { onUploaded: (fileCd: number | null) => void }) {
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [file, setFile] = useState<File | null>(null);
+	const { mutateAsync } = useNoticeFileUploadMutation();
 
-	const handleFile = (newFile: File | null) => {
+	const handleFile = async(newFile: File | null) => {
 		if (!newFile) return;
 
 		if (!ACCEPTED_TYPES.has(newFile.type)) {
@@ -22,10 +24,19 @@ export function NoticeFileUpload() {
 		}
 
 		setFile(newFile);
+
+		const result = await mutateAsync(newFile);
+		if (result.success && result.data) {
+			onUploaded(result.data.notice_file_cd);
+		} else {
+			alert(result.error ?? "파일 업로드 실패");
+			onUploaded(null);
+		}
 	};
 
 	const clearFile = () => {
 		setFile(null);
+		onUploaded(null);
 		if (inputRef.current) inputRef.current.value = '';
 	};
 

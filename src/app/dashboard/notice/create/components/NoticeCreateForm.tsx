@@ -9,8 +9,52 @@ import { NoticeFileUpload } from "@/app/dashboard/notice/create/components/Notic
 import { NoticePinCheckbox } from "@/app/dashboard/notice/create/components/NoticePinCheckbox";
 import { NoticeFormActions } from "@/app/dashboard/notice/create/components/NoticeFormActions";
 import Typography from "@mui/material/Typography";
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { useNoticeCreateMutation } from "@/hooks/mutations/noticeCreate/use-notice-create-mutation";
+import { paths } from "@/paths";
 
 export function NoticeCreateForm() {
+  const router = useRouter();
+  const { mutateAsync, isPending } = useNoticeCreateMutation();
+
+  const [title, setTitle] = React.useState('');
+  const [category, setCategory] = React.useState('');
+  const [cfCd, setCfCd] = React.useState<{ cf_cd: string; label: string } | null>(null);
+  const [content, setContent] = React.useState('');
+  const [pin, setPin] = React.useState(false);
+	const [noticeFileCd, setNoticeFileCd] = React.useState<number | null>(null);
+
+
+  const handleSubmit = async () => {
+    if (!title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+    if (!category.trim()) {
+      alert("공지 유형을 선택해주세요.");
+      return;
+    }
+    if (!content.trim()) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    const result = await mutateAsync({
+      notice_title: title,
+      notice_type: category,
+			cf_cd: cfCd?.cf_cd ?? '',
+      notice_content: content,
+      notice_fix_yn: pin,
+      notice_file_cd: noticeFileCd,
+    });
+
+    if (result.success) {
+      router.push(paths.dashboard.notice);
+    } else {
+      alert(result.error ?? "공지 작성 실패");
+    }
+  };
 	return (
 		<Stack
 			spacing={4}
@@ -30,13 +74,13 @@ export function NoticeCreateForm() {
 			<Typography variant="h5" fontWeight={700}>
 				공지사항 작성
 			</Typography>
-			<NoticeTitleField />
-			<NoticeCategorySelect />
-			<NoticeFogSelect />
-			<NoticeContentField />
-			<NoticeFileUpload />
-			<NoticePinCheckbox />
-			<NoticeFormActions />
+      <NoticeTitleField value={title} onChange={setTitle} />
+      <NoticeCategorySelect value={category} onChange={setCategory} />
+      <NoticeFogSelect value={cfCd} onChange={setCfCd} />
+      <NoticeContentField value={content} onChange={setContent} />
+			<NoticeFileUpload onUploaded={setNoticeFileCd} />
+      <NoticePinCheckbox checked={pin} onChange={setPin} />
+      <NoticeFormActions onCancel={() => router.back()} onSubmit={handleSubmit} submitting={isPending} />
 		</Stack>
 	);
 }

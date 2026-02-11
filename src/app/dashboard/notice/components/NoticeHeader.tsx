@@ -41,7 +41,8 @@ export function NoticeHeader() {
 					</Typography>
 				</Box>
 			</Box>
-
+			{/* eslint-disable-next-line unicorn/prefer-global-this*/}
+			{typeof window === "object" && localStorage.getItem("user_auth") !== "user" && (
 			<Button
 				startIcon={<AddIcon />}
 				onClick={() => router.push(paths.dashboard.noticeCreate)}
@@ -64,6 +65,7 @@ export function NoticeHeader() {
 			>
 				공지사항 작성
 			</Button>
+				)}
 		</Box>
 	);
 }

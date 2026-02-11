@@ -3,11 +3,13 @@
 import { InputAdornment, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-export function NoticeSearchBar() {
+export function NoticeSearchBar({ value, onChange }: { value: string; onChange: (v: string) => void }) {
 	return (
 		<TextField
 			fullWidth
 			placeholder="공지사항 검색"
+			value={value}
+			onChange={(e) => onChange(e.target.value)}
 			size="small"
 			InputProps={{
 				startAdornment: (

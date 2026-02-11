@@ -10,7 +10,7 @@ export interface BaseNotice {
 	notice_cd: string;
 	notice_title: string;
 	notice_type: NoticeType;
-	create_dt: string;
+	create_date: string;
 }
 
 /**
@@ -28,7 +28,7 @@ export interface NoticeFile {
 	notice_file_nm: string;
 	notice_file_type: string;
 	notice_file_size: number;
-	notice_file_link: string;
+	notice_file_save_path: string
 }
 
 /**
@@ -40,6 +40,7 @@ export interface NoticeDetail extends BaseNotice {
 	user_nm: string;
 	notice_content: string;
 	notice_file?: NoticeFile;
+	cf_location?: string
 }
 
 /**
@@ -51,6 +52,6 @@ export const noticeTypeStyles: Record<
 > = {
 	공지: { bg: '#17AACF', fg: '#ffffff' },
 	업데이트: { bg: '#318CE8', fg: '#ffffff' },
-	점검: { bg: '#EDF1F3', fg: '#1f2933' },
+	점검: { bg: '#C52A0A', fg: '#ffffff' },
 	이벤트: { bg: '#F59F0A', fg: '#ffffff' },
 };

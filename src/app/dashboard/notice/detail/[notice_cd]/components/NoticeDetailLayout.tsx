@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { NoticeDetailHeader } from "@/app/dashboard/notice/detail/[notice_cd]/components/NoticeDetailHeader";
 import { NoticeDetailMeta } from "@/app/dashboard/notice/detail/[notice_cd]/components/NoticeDetailMeta";
 import { NoticeDetailContent } from "@/app/dashboard/notice/detail/[notice_cd]/components/NoticeDetailContent";
@@ -33,7 +33,25 @@ export function NoticeDetailLayout({ notice } : NoticeDetailLayoutProps) {
 						},
 					}}
 				>
-					<NoticeDetailMeta create_at={notice.create_dt} notice_title={notice.notice_title} notice_type={notice.notice_type}/>
+					<NoticeDetailMeta create_at={notice.create_date} notice_title={notice.notice_title} notice_type={notice.notice_type}/>
+					{notice.cf_location && (
+						<Box
+							sx={{
+								p: 2.5,
+								borderRadius: 2,
+								bgcolor: '#fff',
+								border: '1px solid',
+								borderColor: 'divider',
+							}}
+						>
+							<Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.5 }}>
+								쿨링포그 위치
+							</Typography>
+							<Typography variant="body1" fontWeight={600}>
+								{notice.cf_location}
+							</Typography>
+						</Box>
+					)}
 					<NoticeDetailContent content={notice.notice_content}/>
 					{notice.notice_file && (
 						<NoticeDetailAttachments file={notice.notice_file}/>

@@ -8,11 +8,13 @@ export const NOTICE_CATEGORIES = [
 	{ value: '점검', label: '점검' },
 ] as const;
 
-export function NoticeCategorySelect() {
+export function NoticeCategorySelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
 	return (
 		<TextField
 			label="카테고리"
 			select
+			value={value}
+			onChange={(e) => onChange(e.target.value)}
 			fullWidth
 			size="small"
 			defaultValue=""
