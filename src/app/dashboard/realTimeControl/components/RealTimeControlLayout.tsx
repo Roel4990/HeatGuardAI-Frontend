@@ -10,7 +10,6 @@ import { RealTimeControlHeader } from "./RealTimeControlHeader";
 
 import { useCoolingFogListMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-list-query';
 import { useCoolingFogDetailMutation } from '@/hooks/mutations/realTimeControl/use-cooling-fog-detail-query';
-import type { CoolingFogDetailData } from '@/types/realTimeControl/real-time-control';
 
 export function RealTimeControlLayout(): React.JSX.Element {
 	const { mutate: fetchCoolingFogList, data: listData } = useCoolingFogListMutation();

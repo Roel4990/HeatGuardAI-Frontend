@@ -140,7 +140,7 @@ function DetailState({ fog }: DetailStateProps): React.JSX.Element {
 						환경 정보
 					</Typography>
 					<Box sx={{ mt: 2, display: 'grid', gap: 2 }}>
-						<DetailRow label="선택 위치 온도" value={`${(fog.cf_nearby_temp * 0.9).toFixed(1)}°C`} />
+						<DetailRow label="선택 위치 온도" value={`${(fog.cf_selected_temp )}°C`} />
 						<DetailRow label="주변 온도" value={`${fog.cf_nearby_temp}°C`} />
 						<DetailRow label="습도" value={`${fog.cf_hum_per}%`} />
 					</Box>
@@ -154,6 +154,8 @@ const fixedSlots = ['00:00', '06:00', '12:00', '18:00'];
 export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps): React.JSX.Element {
 	const chartData = React.useMemo(() => {
 		if (!selectedCoolingFog) return [];
+
+
 
 		return fixedSlots.map((time) => {
 			const values = selectedCoolingFog.time?.[time];
@@ -193,7 +195,6 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 								p: 2,
 							}}
 						>
-							{/* TODO: Replace with a real chart configuration and server-driven data. */}
 							<ResponsiveContainer width="100%" height="100%">
 								<LineChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
 									<CartesianGrid strokeDasharray="3 3" />
@@ -208,7 +209,8 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 										name="선택 위치 온도"
 										stroke="#2563eb"
 										strokeWidth={2}
-										dot={false}
+										dot={{ r: 4 }}
+										activeDot={{ r: 6 }}
 									/>
 									<Line
 										type="monotone"
@@ -217,7 +219,8 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 										name="주변 온도"
 										stroke="#f97316"
 										strokeWidth={2}
-										dot={false}
+										dot={{ r: 4 }}
+										activeDot={{ r: 6 }}
 									/>
 									<Line
 										type="monotone"
@@ -225,7 +228,8 @@ export function RealTimeInfoPanel({ selectedCoolingFog }: RealTimeInfoPanelProps
 										name="습도"
 										stroke="#38bdf8"
 										strokeWidth={2}
-										dot={false}
+										dot={{ r: 4 }}
+										activeDot={{ r: 6 }}
 									/>
 								</LineChart>
 							</ResponsiveContainer>
