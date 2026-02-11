@@ -33,9 +33,9 @@ export function Header({ onLoginClick, onTestClick, showAuthButtons = true }: He
 							component="img"
 							src="/assets/heatguardLogo.svg"
 							alt="HeatGuard"
-							sx={{ width: 32, height: 32 }}
+							sx={{ width: 48, height: 48 }}
 						/>
-						<Typography variant="subtitle1" fontWeight={700} color="text.primary" sx={{ display: 'block' }}>
+						<Typography variant="h6" fontWeight={700} color="text.primary" sx={{ display: 'block' }}>
 							HeatGuard
 						</Typography>
 					</Box>

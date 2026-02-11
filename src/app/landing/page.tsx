@@ -24,9 +24,9 @@ export default function Landing(): React.JSX.Element {
 	const { checkSession } = useUser();
 
 	const features = [
-		{ icon: HouseSimpleIcon, title: '대시보드', description: '한눈에 현황을 파악하고 주요 지표를 관리합니다.' },
-		{ icon: AirTrafficControlIcon, title: '실시간 관제', description: '현재 설치 되어있는 쿨링포그 데이터를 확인 할 수 있습니다.' },
-		{ icon: BrainIcon, title: 'AI 최적 위치', description: '데이터 기반으로 최적의 설치 위치를 제안합니다.' },
+		{ icon: HouseSimpleIcon, title: '대시보드', description: '지역별 폭염 위험·취약도 지표를 한 화면에서 제공합니다.' },
+		{ icon: AirTrafficControlIcon, title: '실시간 관제', description: '쿨링포그 운영 현황을 실시간으로 수집·관리합니다.' },
+		{ icon: BrainIcon, title: 'AI 최적 위치', description: '효과·형평성을 고려한 설치 우선지역을 도출합니다.' },
 		{ icon: CurrencyDollarIcon, title: '예산 시뮬레이션', description: '예산 시나리오를 분석해 최적의 투자 결정을 돕습니다.' },
 	];
 
@@ -93,12 +93,11 @@ export default function Landing(): React.JSX.Element {
 				<Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
 					<Stack direction={{ xs: 'column', md: 'row' }} spacing={6} alignItems="center">
 						<Stack spacing={3} sx={{ flex: 1 }}>
-							<Typography variant="h3" fontWeight={800} color="text.primary">
+							<Typography variant="h1" fontWeight={800} color="text.primary" >
 								HeatGuard
 							</Typography>
-							<Typography variant="body1" color="text.secondary" sx={{ fontSize: 18, lineHeight: 1.8 }}>
-								다양한 데이터 분석을 기반으로 AI가 쿨링포그의 설치 우선순위와 예산을 예측하고 운영까지 지원하는
-								폭염 대응의 기준을 바꾸는 데이터 기반 쿨링포그 통합 관리 시스템 입니다.
+							<Typography variant="body1" color="text.secondary" sx={{ fontSize: 25, lineHeight: 1.8 }}>
+								데이터로 위험을 찾고, AI로 도시 대응을 준비하세요.
 							</Typography>
 							<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
 								<Button
@@ -165,10 +164,10 @@ export default function Landing(): React.JSX.Element {
 			<Box component="section" sx={{ py: { xs: 8, md: 12 }, bgcolor: 'rgba(239, 246, 255, 0.4)' }}>
 				<Container maxWidth="lg">
 					<Stack spacing={2} alignItems="center" sx={{ mb: 6 }}>
-						<Typography variant="h4" fontWeight={800}>
+						<Typography variant="h2" fontWeight={800}>
 							핵심 기능
 						</Typography>
-						<Typography variant="body1" color="text.secondary">
+						<Typography variant="body1" color="text.secondary" sx={{ fontSize: 25 }}>
 							HeatGuard의 주요 기능을 확인하세요
 						</Typography>
 					</Stack>
@@ -178,7 +177,7 @@ export default function Landing(): React.JSX.Element {
 							display: 'grid',
 							gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
 							gap: 3,
-							maxWidth: 900,
+							maxWidth: 1200,
 							mx: 'auto',
 						}}
 					>
