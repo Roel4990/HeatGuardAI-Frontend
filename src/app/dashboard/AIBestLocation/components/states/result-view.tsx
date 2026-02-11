@@ -112,7 +112,7 @@ export default function ResultView({
       />
 
       {/* 결과 카드 리스트 */}
-      <CardSliderWithActive cardWidth={680} resetKey={resetKey} activeIndex={activeIndex}>
+      <CardSliderWithActive cardWidth={720} resetKey={resetKey} activeIndex={activeIndex}>
         {items.map((item, idx) => (
           <Box
             key={`${item.gee_address_full ?? 'item'}-${idx}`}
