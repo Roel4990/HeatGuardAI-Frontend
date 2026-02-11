@@ -34,7 +34,10 @@ export default function Page(): React.JSX.Element {
     setIsLoading(true);
 
     try {
-      const res = await axios.post<RecoApiResponse>("/api/AIBestLocation/AILocation", request);
+      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      const res = await axios.post<RecoApiResponse>("/api/AIBestLocation/AILocation", request, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       const payload = res.data;
       const isEmpty =
         !payload?.success ||
