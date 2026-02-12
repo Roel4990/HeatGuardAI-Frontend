@@ -1,10 +1,9 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "@mui/material/Link";
-import { openPopup } from "@/lib/open-popup"; // 경로는 프로젝트에 맞게 조정
-import type { SxProps } from '@mui/material/styles';
-import type { Theme } from '@mui/material/styles';
+import { openPopup } from "@/lib/open-popup"; // 寃쎈줈???꾨줈?앺듃??留욊쾶 議곗젙
+import type { SxProps, Theme } from "@mui/material/styles";
 
 const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL ?? "";
 

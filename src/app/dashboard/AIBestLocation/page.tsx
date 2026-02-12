@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -14,14 +14,14 @@ import RightPanel from './components/panel/right-panel';
 import { Container } from "@mui/material";
 
 export default function Page(): React.JSX.Element {
-  const HEADER_HEIGHT = 64; // 상단 헤더 높이
-  const MAP_HEIGHT = 500;   // 지도 높이
+  const HEADER_HEIGHT = 64; // ?곷떒 ?ㅻ뜑 ?믪씠
+  const MAP_HEIGHT = 500;   // 吏???믪씠
 
   const [request, setRequest] = React.useState<RecoRequestBody>({
     target_count: 3,
     target_region_gu: '',
     target_region_dong: '',
-    reco_loc_type_cd: 0, // 0: 전체
+    reco_loc_type_cd: 0, // 0: ?꾩껜
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -34,7 +34,8 @@ export default function Page(): React.JSX.Element {
     setIsLoading(true);
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      const win = globalThis.window;
+      const token = win ? win.localStorage.getItem("access_token") : null;
       const res = await axios.post<RecoApiResponse>("/api/AIBestLocation/AILocation", request, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
@@ -48,7 +49,7 @@ export default function Page(): React.JSX.Element {
       if (isEmpty) {
         showAlert({
           severity: 'warning',
-          message: '현재 추천할 수 있는 쿨링포그 설치 지역이 없습니다. 조건을 변경하거나 다른 지역을 선택해 주세요.',
+          message: '?꾩옱 異붿쿇?????덈뒗 荑⑤쭅?ш렇 ?ㅼ튂 吏??씠 ?놁뒿?덈떎. 議곌굔??蹂寃쏀븯嫄곕굹 ?ㅻⅨ 吏??쓣 ?좏깮??二쇱꽭??',
         });
         return;
       }
@@ -57,7 +58,7 @@ export default function Page(): React.JSX.Element {
       setSubmittedRequest(request);
       setResultKey((k) => k + 1);
     } catch {
-      showAlert({ severity: 'error', message: '요청에 실패했습니다.' });
+      showAlert({ severity: 'error', message: '?붿껌???ㅽ뙣?덉뒿?덈떎.' });
     } finally {
       setIsLoading(false);
     }

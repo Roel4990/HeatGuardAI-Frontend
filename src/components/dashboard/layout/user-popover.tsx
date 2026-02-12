@@ -1,4 +1,4 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -17,7 +17,7 @@ import { useUser } from '@/hooks/use-user';
 const maskName = (name?: string) => {
 	if (!name) return '-';
 	if (name.length <= 2) return name[0] + '*';
-	return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+	return name[0] + '*'.repeat(name.length - 2) + name.at(-1);
 };
 
 const maskEmail = (email?: string) => {
@@ -89,7 +89,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          로그아웃
+          濡쒓렇?꾩썐
         </MenuItem>
       </MenuList>
     </Popover>

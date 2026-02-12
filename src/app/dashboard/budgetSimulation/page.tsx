@@ -1,7 +1,8 @@
 ﻿"use client";
 
+
 import * as React from "react";
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography, SelectChangeEvent } from "@mui/material";
 
 import type { BudgetItem } from "@/types/budgetSimulation/budget";
 import { FOG_ITEMS } from "@/app/dashboard/data/budgetSimulation/coolingfog-items";
@@ -57,7 +58,7 @@ export default function CoolingFogBudgetPage() {
   const over = remain < 0;
   const status: "none" | "ok" | "over" = budget <= 0 ? "none" : over ? "over" : "ok";
 
-  const handleYears = (e: React.ChangeEvent<{ value: unknown }> | any) => setYears(clampInt(e.target.value, 1, 5));
+  const handleYears = (e: SelectChangeEvent) => setYears(clampInt(e.target.value, 1, 5));
 
   const handleQty = (code: string, next: unknown) => {
     const qty = clampInt(next, 0, MAX_QTY);
@@ -100,7 +101,7 @@ export default function CoolingFogBudgetPage() {
       setBudgetText("");
       return;
     }
-    const n = Math.min(parseInt(digits, 10) || 0, MAX_BUDGET);
+    const n = Math.min(Number.parseInt(digits, 10) || 0, MAX_BUDGET);
     setBudget(n);
     setBudgetText(formatNumberWithComma(n));
   };

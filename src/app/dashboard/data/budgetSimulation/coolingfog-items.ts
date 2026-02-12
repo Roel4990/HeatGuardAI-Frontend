@@ -1,4 +1,4 @@
-// data/coolingfog-items.ts
+﻿// data/coolingfog-items.ts
 import type { FogItem } from "@/types/budgetSimulation/coolingfog";
 
 export const FOG_ITEMS: FogItem[] = [
@@ -6,7 +6,7 @@ export const FOG_ITEMS: FogItem[] = [
     code: "AGP-MB-03",
     name: "미스트바",
     unitPrice: 2_173_000,
-    elecMonthly: 1_307,
+    elecMonthly: 1307,
     waterMonthly: 900,
     loc: "펜스, 구조물",
     imgUrl: "/assets/agp-mb-03.png",
@@ -16,7 +16,7 @@ export const FOG_ITEMS: FogItem[] = [
     code: "AGP-MR-1000",
     name: "황톳길 미스트바",
     unitPrice: 3_250_000,
-    elecMonthly: 1_134,
+    elecMonthly: 1134,
     waterMonthly: 900,
     loc: "황톳길 바닥",
     imgUrl: "/assets/agp-mr-1000.png",
@@ -26,8 +26,8 @@ export const FOG_ITEMS: FogItem[] = [
     code: "AGP-MP-406",
     name: "미스트폴 406",
     unitPrice: 7_420_000,
-    elecMonthly: 5_389,
-    waterMonthly: 3_600,
+    elecMonthly: 5389,
+    waterMonthly: 3600,
     loc: "공원, 중앙광장",
     imgUrl: "/assets/agp-mp-406.png",
     link: "https://ppi.g2b.go.kr:8914/sm/dm/sch/searchGoodsDetail.do?invGdsIdntNo=00020695",
@@ -36,8 +36,8 @@ export const FOG_ITEMS: FogItem[] = [
     code: "AGP-MP-106",
     name: "미스트폴 106",
     unitPrice: 5_822_500,
-    elecMonthly: 2_615,
-    waterMonthly: 1_800,
+    elecMonthly: 2615,
+    waterMonthly: 1800,
     loc: "긴 산책로",
     imgUrl: "/assets/agp-mp-106.png",
     link: "https://ppi.g2b.go.kr:8914/sm/dm/sch/searchGoodsDetail.do?invGdsIdntNo=00009729",
@@ -46,8 +46,8 @@ export const FOG_ITEMS: FogItem[] = [
     code: "AGP-MP-432",
     name: "미스트 열주",
     unitPrice: 9_650_000,
-    elecMonthly: 7_631,
-    waterMonthly: 4_500,
+    elecMonthly: 7631,
+    waterMonthly: 4500,
     loc: "사방이 트인광장",
     imgUrl: "/assets/agp-mp-432.png",
     link: "https://ppi.g2b.go.kr:8914/sm/dm/sch/searchGoodsDetail.do?invGdsIdntNo=00026380",
@@ -73,3 +73,5 @@ export const FOG_ITEMS: FogItem[] = [
     link: null,
   },
 ];
+
+

@@ -92,7 +92,7 @@ export function SignUpForm(): React.JSX.Element {
           localStorage.setItem('user_nm', result.data.user_nm);
           localStorage.setItem('user_email', result.data.user_email);
 					localStorage.setItem('user_cd', result.data.user_cd);
-        } catch (storageError) {
+        } catch {
           // noop
         }
 
@@ -221,7 +221,7 @@ export function SignUpForm(): React.JSX.Element {
                   {...field}
                   label="Confirm password"
                   type="password"
-                  onBlur={async (event) => {
+                  onBlur={async () => {
                     field.onBlur();
                     await trigger('confirmPassword');
                   }}

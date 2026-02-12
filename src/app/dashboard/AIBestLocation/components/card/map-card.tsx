@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
@@ -18,6 +18,48 @@ export type MapCardProps = {
 
 const MARKER_IMG = '/assets/marker.svg';
 
+type NaverLatLng = {
+  lat: number;
+  lng: number;
+};
+
+type NaverPoint = {
+  x: number;
+  y: number;
+};
+
+type NaverMap = {
+  setCenter: (center: NaverLatLng) => void;
+  setZoom: (zoom: number) => void;
+};
+
+type NaverMarker = {
+  setMap: (map: NaverMap | null) => void;
+};
+
+type NaverMapConstructor = new (
+  element: HTMLElement,
+  options: { center: NaverLatLng; zoom: number }
+) => NaverMap;
+
+type NaverLatLngConstructor = new (lat: number, lng: number) => NaverLatLng;
+type NaverMarkerConstructor = new (options: {
+  position: NaverLatLng;
+  map: NaverMap;
+  icon: { content: string; anchor: NaverPoint };
+}) => NaverMarker;
+type NaverPointConstructor = new (x: number, y: number) => NaverPoint;
+
+type NaverMaps = {
+  LatLng: NaverLatLngConstructor;
+  Map: NaverMapConstructor;
+  Marker: NaverMarkerConstructor;
+  Point: NaverPointConstructor;
+};
+
+type NaverGlobal = { maps: NaverMaps };
+type NaverWindow = typeof globalThis & { naver?: NaverGlobal };
+
 const MapCard: React.FC<MapCardProps> = ({
   height,
   points,
@@ -27,60 +69,69 @@ const MapCard: React.FC<MapCardProps> = ({
   activeIndex,
 }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any | null>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapInstanceRef = useRef<NaverMap | null>(null);
+  const markersRef = useRef<NaverMarker[]>([]);
   const [loaded, setLoaded] = useState(false);
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
   useEffect(() => {
-    // eslint-disable-next-line unicorn/prefer-global-this
-    if ((window as any).naver?.maps) setLoaded(true);
+    if ((globalThis as NaverWindow).naver?.maps) setLoaded(true);
   }, []);
 
   useEffect(() => {
     if (!loaded || !mapRef.current || points.length === 0) return;
 
-    // eslint-disable-next-line unicorn/prefer-global-this
-    const naver = (window as any).naver;
+    const naver = (globalThis as NaverWindow).naver;
     if (!naver) return;
 
     const targetPoint = focusPoint ?? points[0];
     const center = new naver.maps.LatLng(targetPoint.lat, targetPoint.lng);
     const zoom = focusPoint ? 18 : 14;
 
-    if (!mapInstanceRef.current) {
-      mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
+    const updateMapView = (map: NaverMap) => {
+      map.setCenter(center);
+      map.setZoom(zoom);
+    };
+
+    const initMap = () => {
+      const el = mapRef.current;
+      if (!el) return;
+      mapInstanceRef.current = new naver.maps.Map(el, {
         center,
         zoom,
       });
+    };
+
+    if (mapInstanceRef.current) {
+      updateMapView(mapInstanceRef.current);
     } else {
-      mapInstanceRef.current.setCenter(center);
-      mapInstanceRef.current.setZoom(zoom);
+      initMap();
     }
 
-    markersRef.current.forEach((marker) => marker.setMap(null));
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    for (const marker of markersRef.current) marker.setMap(null);
     markersRef.current = [];
 
-    points.forEach((item, idx) => {
+    for (const [idx, item] of points.entries()) {
       const position = new naver.maps.LatLng(item.lat, item.lng);
 
       const marker = new naver.maps.Marker({
         position,
-        map: mapInstanceRef.current,
+        map: map,
         icon: {
           content: makeMarkerHTML(idx + 1),
           anchor: new naver.maps.Point(18, 36),
         },
       });
       markersRef.current.push(marker);
-    });
+    }
   }, [loaded, points, focusPoint, focusKey]);
 
-  if (!clientId) {
-    return <Box>지도 키를 확인해주세요.</Box>;
-  }
 
-  return (
+  if (clientId) {
+    return (
     <Box sx={{ height, mb: 2, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       <Script
         src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`}
@@ -158,7 +209,11 @@ const MapCard: React.FC<MapCardProps> = ({
 
       <Box ref={mapRef} sx={{ width: '100%', height: '100%' }} />
     </Box>
-  );
+    );
+  }
+
+  return <Box>지도 키를 확인해주세요.</Box>;
+
 };
 
 export default MapCard;
@@ -192,3 +247,7 @@ function makeMarkerHTML(rank: number) {
     </div>
   `;
 }
+
+
+
+

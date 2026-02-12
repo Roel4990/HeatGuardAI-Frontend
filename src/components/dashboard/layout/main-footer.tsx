@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Box from "@mui/material/Box";
@@ -50,3 +50,4 @@ export function MainFooter({ fullWidth = false }: MainFooterProps): React.JSX.El
     </Box>
   );
 }
+

@@ -30,9 +30,10 @@ export type RecommendationText = {
   intro: string;
   basis: string;
   result: string;
-  insights: string[];
+  insights: Array<Record<string, string>>;
   betterPlan: string;
   note: string;
+  caution: string;
 };
 
 export type ReportSnapshot = {
