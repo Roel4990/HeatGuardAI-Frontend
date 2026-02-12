@@ -30,7 +30,7 @@ export type RecommendationText = {
   intro: string;
   basis: string;
   result: string;
-  insights: Array<Record<string, string>>;
+  insights: Array<Partial<Record<string, string>>>;
   betterPlan: string;
   note: string;
   caution: string;

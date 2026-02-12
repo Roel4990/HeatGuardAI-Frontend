@@ -14,8 +14,8 @@ import RightPanel from './components/panel/right-panel';
 import { Container } from "@mui/material";
 
 export default function Page(): React.JSX.Element {
-  const HEADER_HEIGHT = 64; // ?곷떒 ?ㅻ뜑 ?믪씠
-  const MAP_HEIGHT = 500;   // 吏???믪씠
+  const HEADER_HEIGHT = 64; // 상단 헤더 높이
+  const MAP_HEIGHT = 500;   // 지도 높이
 
   const [request, setRequest] = React.useState<RecoRequestBody>({
     target_count: 3,
@@ -49,7 +49,7 @@ export default function Page(): React.JSX.Element {
       if (isEmpty) {
         showAlert({
           severity: 'warning',
-          message: '?꾩옱 異붿쿇?????덈뒗 荑⑤쭅?ш렇 ?ㅼ튂 吏??씠 ?놁뒿?덈떎. 議곌굔??蹂寃쏀븯嫄곕굹 ?ㅻⅨ 吏??쓣 ?좏깮??二쇱꽭??',
+          message: '현재 추천할 만한 쿨링포그 설치 지점이 없습니다. 조건을 변경하거나 다른 지역을 선택해 주세요.',
         });
         return;
       }
@@ -58,7 +58,7 @@ export default function Page(): React.JSX.Element {
       setSubmittedRequest(request);
       setResultKey((k) => k + 1);
     } catch {
-      showAlert({ severity: 'error', message: '?붿껌???ㅽ뙣?덉뒿?덈떎.' });
+      showAlert({ severity: 'error', message: '요청에 실패했습니다.' });
     } finally {
       setIsLoading(false);
     }
