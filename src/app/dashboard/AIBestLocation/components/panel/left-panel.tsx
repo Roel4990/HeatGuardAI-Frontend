@@ -140,11 +140,28 @@ function RegionSelect({
   renderValue,
   sx,
 }: RegionSelectProps) {
+  const disabledSx = disabled
+    ? {
+        "& .MuiInputBase-root.Mui-disabled": {
+          bgcolor: "rgba(148,163,184,0.18)",
+          color: "text.secondary",
+          WebkitTextFillColor: "rgba(100,116,139,0.9)",
+          cursor: "not-allowed",
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "rgba(148,163,184,0.45)",
+        },
+        "& .MuiSvgIcon-root": {
+          color: "rgba(100,116,139,0.7)",
+        },
+      }
+    : null;
+
   return (
     <TextField
       select
       size="small"
-      sx={sx}
+      sx={{ ...sx, ...disabledSx }}
       value={value}
       onChange={(event) => onChange(String(event.target.value))}
       disabled={disabled}
@@ -233,7 +250,7 @@ export default function LeftPanel({
       }}
     >
       <Stack
-        direction="row"
+        direction={{ xs: "column", md: "row" }}
         spacing={1}
         alignItems="flex-start"
         sx={{
@@ -268,7 +285,9 @@ export default function LeftPanel({
           </TextField>
         </StepBox>
 
-        <StepChevron />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <StepChevron />
+        </Box>
 
         {/* 2 */}
         <StepBox
@@ -312,7 +331,9 @@ export default function LeftPanel({
           </Stack>
         </StepBox>
 
-        <StepChevron />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <StepChevron />
+        </Box>
 
         {/* 1 */}
         <StepBox title="3. 설치 목표 개수" width={170} tooltip="1~5개 범위로 선택합니다.">
@@ -353,7 +374,9 @@ export default function LeftPanel({
           />
         </StepBox>
 
-        <StepChevron />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <StepChevron />
+        </Box>
 
         {/* 버튼 */}
         <Box sx={{ width: 190, display: "flex", flexDirection: "column", gap: 0.5 }}>

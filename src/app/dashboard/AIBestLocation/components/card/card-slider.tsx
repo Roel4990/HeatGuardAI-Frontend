@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -25,14 +25,14 @@ const CardSlider: React.FC<CardSliderProps> = ({
 }) => {
   const railRef = React.useRef<HTMLDivElement | null>(null);
 
-  // ✅ null 포함 + 배열 타입 명확히
+  // ??null ?ы븿 + 諛곗뿴 ???紐낇솗??
   const itemRefs = React.useRef<Array<HTMLDivElement | null>>([]);
 
   const [maxH, setMaxH] = React.useState<number | null>(null);
 
   const items = React.useMemo(() => React.Children.toArray(children), [children]);
 
-  // ✅ children 개수 바뀌면 refs 길이도 정리(안전)
+  // ??children 媛쒖닔 諛붾뚮㈃ refs 湲몄씠???뺣━(?덉쟾)
   React.useEffect(() => {
     itemRefs.current = itemRefs.current.slice(0, items.length);
   }, [items.length]);
@@ -56,10 +56,10 @@ const CardSlider: React.FC<CardSliderProps> = ({
     for (const n of itemRefs.current) if (n) ro.observe(n);
     ro.observe(el);
 
-    window.addEventListener('resize', measure);
+    globalThis.addEventListener('resize', measure);
     return () => {
       ro.disconnect();
-      window.removeEventListener('resize', measure);
+      globalThis.removeEventListener('resize', measure);
     };
   }, [items.length]);
 
@@ -72,8 +72,8 @@ const CardSlider: React.FC<CardSliderProps> = ({
     let best = 0;
     let bestDist = Infinity;
 
-    itemRefs.current.forEach((node, i) => {
-      if (!node) return;
+    for (const [i, node] of itemRefs.current.entries()) {
+      if (!node) continue;
       const left = node.offsetLeft;
       const w = node.offsetWidth;
       const center = left + w / 2;
@@ -82,7 +82,7 @@ const CardSlider: React.FC<CardSliderProps> = ({
         bestDist = d;
         best = i;
       }
-    });
+    }
 
     return best;
   }, []);
@@ -100,16 +100,16 @@ const CardSlider: React.FC<CardSliderProps> = ({
     const el = railRef.current;
     if (!el) return;
 
-    let t: number | undefined;
+    let t: ReturnType<typeof setTimeout> | undefined;
 
     const onScroll = () => {
-      if (t) window.clearTimeout(t);
-      t = window.setTimeout(() => scrollToIndex(nearestIndex()), 90);
+      if (t) globalThis.clearTimeout(t);
+      t = globalThis.setTimeout(() => scrollToIndex(nearestIndex()), 90);
     };
 
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      if (t) window.clearTimeout(t);
+      if (t) globalThis.clearTimeout(t);
       el.removeEventListener('scroll', onScroll);
     };
   }, [nearestIndex, scrollToIndex]);
@@ -168,7 +168,7 @@ const CardSlider: React.FC<CardSliderProps> = ({
         <ChevronRightIcon />
       </IconButton>
 
-      {/* 레일 */}
+      {/* ?덉씪 */}
       <Box
         ref={railRef}
         sx={{
@@ -187,7 +187,7 @@ const CardSlider: React.FC<CardSliderProps> = ({
         {items.map((child, i) => (
           <Box
             key={i}
-            // ✅ 여기서 "return" 절대 안 함 (블록 바디)
+            // ???ш린??"return" ?덈? ????(釉붾줉 諛붾뵒)
             ref={(node: HTMLDivElement | null) => {
               itemRefs.current[i] = node;
             }}

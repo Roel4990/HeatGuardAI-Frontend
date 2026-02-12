@@ -1,4 +1,4 @@
-// src/app/dashboard/AIBestLocation/components/states/idle-state.tsx
+﻿// src/app/dashboard/AIBestLocation/components/states/idle-state.tsx
 "use client";
 
 import * as React from "react";
@@ -133,7 +133,7 @@ export default function IdleState() {
           }}
         >
           {FEATURE_ITEMS.map(({ label, desc, Icon, secondaryIcon }, idx) => (
-            <Stack key={`${label}-${idx}`} alignItems="center" spacing={1.0} sx={{ textAlign: "center" }}>
+            <Stack key={`${label}-${idx}`} alignItems="center" spacing={1} sx={{ textAlign: "center" }}>
               <FeatureIcon Icon={Icon} SecondaryIcon={secondaryIcon} accent={accent} />
 
               <Stack spacing={0.1} alignItems="center">

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -95,7 +95,7 @@ export default function ResultView({
         />
         <StateCard
           label="예상 보호 인원"
-          value={25_345}
+          value="25,345"
           unit="명"
           icon={<GroupOutlinedIcon />}
         />
@@ -126,3 +126,4 @@ export default function ResultView({
     </>
   );
 }
+

@@ -23,42 +23,58 @@ const formatNumber = (n?: number | null) =>
 
 function popuColor(level?: string) {
   switch (level) {
-    case '높음':
-    case '많음':
+    case '높음': {
       return { bgcolor: '#ffebee', color: '#c62828' };
-    case '보통':
+    }
+    case '많음': {
+      return { bgcolor: '#ffebee', color: '#c62828' };
+    }
+    case '보통': {
       return { bgcolor: '#e3f2fd', color: '#1565c0' };
-    case '낮음':
-    case '적음':
+    }
+    case '낮음': {
       return { bgcolor: '#e8f5e9', color: '#2e7d32' };
-    default:
+    }
+    case '적음': {
+      return { bgcolor: '#e8f5e9', color: '#2e7d32' };
+    }
+    default: {
       return { bgcolor: '#f5f5f5', color: '#616161' };
+    }
   }
 }
 
 function levelColor(level?: string) {
   switch (level) {
-    case '높음':
+    case '높음': {
       return { bgcolor: '#e8f5e9', color: '#2e7d32' };
-    case '보통':
+    }
+    case '보통': {
       return { bgcolor: '#e3f2fd', color: '#1565c0' };
-    case '낮음':
+    }
+    case '낮음': {
       return { bgcolor: '#ffebee', color: '#c62828' };
-    default:
+    }
+    default: {
       return { bgcolor: '#f5f5f5', color: '#616161' };
+    }
   }
 }
 
 function lstLevelColor(level?: string) {
   switch (level) {
-    case '높음':
+    case '높음': {
       return { bgcolor: '#ffebee', color: '#c62828' };
-    case '보통':
+    }
+    case '보통': {
       return { bgcolor: '#e3f2fd', color: '#1565c0' };
-    case '낮음':
+    }
+    case '낮음': {
       return { bgcolor: '#e8f5e9', color: '#2e7d32' };
-    default:
+    }
+    default: {
       return { bgcolor: '#f5f5f5', color: '#616161' };
+    }
   }
 }
 
@@ -345,3 +361,4 @@ export default function ResultCard({
     </Paper>
   );
 }
+

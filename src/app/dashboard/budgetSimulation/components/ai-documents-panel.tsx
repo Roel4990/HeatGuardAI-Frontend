@@ -46,6 +46,75 @@ export type AIDocumentsPanelProps = {
 type DocStatus = "idle" | "ready";
 type ReportText = ReturnType<typeof buildReportDummyText>;
 const MAX_QTY = 99;
+const ALL: LocationType = "전체";
+const TYPES: LocationType[] = [
+  "전체",
+  "공원",
+  "광장",
+  "버스 정류장",
+  "보행로",
+  "시장",
+  "주거 밀집",
+  "취약시설 주변",
+  "공공시설",
+];
+
+const buildReportSignature = (
+  years: number,
+  budget: number,
+  selectedTypes: LocationType[],
+  pickedItems: BudgetItemLike[]
+) =>
+  JSON.stringify({
+    years,
+    budget,
+    selectedTypes: [...selectedTypes].sort(),
+    items: [...pickedItems]
+      .map((it) => ({
+        code: it.code,
+        qty: it.qty,
+        unitPrice: it.unitPrice,
+        elecMonthly: it.elecMonthly,
+        waterMonthly: it.waterMonthly,
+      }))
+      .sort((a, b) => a.code.localeCompare(b.code)),
+  });
+
+const buildRecSignature = (
+  years: number,
+  budget: number,
+  selectedTypes: LocationType[],
+  recPlan: {
+    items: Array<{ code: string; qty: number; initCostTotal: number; annualCostTotal: number }>;
+    sumInit: number;
+    sumAnnual: number;
+    sumTotal: number;
+    usagePct: number;
+    remain: number;
+    totalQty: number;
+  }
+) =>
+  JSON.stringify({
+    years,
+    budget,
+    selectedTypes: [...selectedTypes].sort(),
+    totals: {
+      sumInit: recPlan.sumInit,
+      sumAnnual: recPlan.sumAnnual,
+      sumTotal: recPlan.sumTotal,
+      usagePct: recPlan.usagePct,
+      remain: recPlan.remain,
+      totalQty: recPlan.totalQty,
+    },
+    items: [...recPlan.items]
+      .map((it) => ({
+        code: it.code,
+        qty: it.qty,
+        initCostTotal: it.initCostTotal,
+        annualCostTotal: it.annualCostTotal,
+      }))
+      .sort((a, b) => a.code.localeCompare(b.code)),
+  });
 
 function formatKRW(n: number) {
   const safe = Number.isFinite(n) ? Math.round(n) : 0;
@@ -62,14 +131,14 @@ function normalizeLocTags(loc: string): Set<LocationType> {
   const has = (kw: string) => s.includes(kw);
 
   // POC 매핑(필요시 고도화)
-  if (has("공원")) tags.add("공원");
-  if (has("광장") || has("중앙광장") || has("트인광장")) tags.add("광장");
-  if (has("버스") || has("정류장") || has("버스정류장") || has("버스 정류장")) tags.add("버스 정류장");
-  if (has("보행로") || has("산책로") || has("경로") || has("입구")) tags.add("보행로");
-  if (has("시장") || has("전통시장") || has("상가")) tags.add("시장");
-  if (has("주거") || has("주택") || has("아파트") || has("주거지") || has("밀집")) tags.add("주거 밀집");
-  if (has("취약시설") || has("복지") || has("노인") || has("요양") || has("장애")) tags.add("취약시설 주변");
-  if (has("공공시설") || has("시설") || has("청사") || has("센터")) tags.add("공공시설");
+  if (has("공원") || has("공원입구")) tags.add("공원");
+  if (has("광장") || has("중앙광장") || has("사방이 트인광장")) tags.add("광장");
+  if (has("긴 산책로") || has("펜스, 구조물")) tags.add("버스 정류장");
+  if (has("보행로") || has("황톳길 바닥") || has("펜스, 구조물")) tags.add("보행로");
+  if (has("펜스, 구조물")) tags.add("시장");
+  if (has("긴 산책로")) tags.add("주거 밀집");
+  if (has("펜스, 구조물")) tags.add("취약시설 주변");
+  if (has("사방이 트인 광장") || has("공원입구")) tags.add("공공시설");
 
   // 펜스/구조물 → 공공시설로 임시
   if (has("펜스") || has("구조물")) tags.add("공공시설");
@@ -149,11 +218,21 @@ function buildRecommendationDummyText(args: {
         )}이며, 예산 사용률은 약 ${usagePct.toFixed(1)}%입니다. (총 설치 ${totalQty}대)`
         : `가용 예산이 입력되지 않아 추천 구성 산정이 제한됩니다.`,
     insights: [
-      `비용 구조 측면에서, 대부분 품목은 운영비보다 초기 설치비(A)의 영향이 상대적으로 큰 것으로 나타납니다.`,
-      `권장 설치 위치(loc) 특성상, 동선형(보행로/입구)과 거점형(공원/광장) 품목을 혼합하는 구성이 현장 적용 시 검토에 유리할 수 있습니다.`,
-      `운영기간이 증가할수록 연간 운영비(B)의 누적 효과가 확대되므로, 운영비 비중이 높은 품목은 비용 추이 관리 관점에서 확인이 필요할 수 있습니다.`,
+      {
+        "기상": `체감온도 저감 효과를 고려할 때, 초기 설치비(A)가 운영비보다 정책 효과에 큰 영향을 미치는 것으로 나타납니다. 특히 고온 취약 구간에서는 시설 배치의 우선순위를 높게 설정할 필요가 있습니다.`,
+      },
+      {
+        "도시계획": `권장 설치 위치(loc) 특성상, 동선형(보행로/입구)과 거점형(공원/광장) 품목을 혼합하는 구성이 현장 적용 시 유리합니다. 이용 흐름을 고려한 배치가 체류 구간의 효과를 높일 수 있습니다.`,
+      },
+      {
+        "재정/예산": `운영기간이 증가할수록 연간 운영비(B)의 누적 효과가 확대됩니다. 예산 효율성을 높이기 위해 운영비 비중이 높은 품목은 비용 추이 관리가 필요합니다.`,
+      },
+      {
+        "운영/유지관리": `추천 구성은 예산 범위 내에서 핵심 설치 유형을 우선 반영하는 방식으로 산정되었습니다. 단계적 확대 적용과 점검 주기 관리가 안정적인 운영에 유리합니다.`,
+      },
     ],
     betterPlan: `향후 검토 단계에서는 (1) 핵심 거점(공원/광장) 중심의 체류형 구성과 (2) 이동 동선(보행로/입구) 중심의 분산형 구성을 각각 산정하여 비교 검토하는 방안을 고려할 수 있습니다. 또한 야간·특수구역(경관 동선 등)의 경우 운영 조건(운영시간, 급수/전기 인입 등)을 반영한 별도 검토가 필요할 수 있습니다.`,
+    caution: `본 추천안은 입력된 예산 및 설치 유형 조건을 기준으로 산정된 결과입니다. 실제 적용 시에는 현장 여건, 운영 인프라, 안전 기준을 추가로 검토해야 합니다.`,
     note:
       remain >= 0
         ? `예산 잔여 금액은 ${formatKRW(
@@ -168,21 +247,8 @@ function buildRecommendationDummyText(args: {
 export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
   const { years, budget, pickedItems, allItems } = props;
 
-  const ALL: LocationType = "전체";
-  const TYPES: LocationType[] = [
-    "전체",
-    "공원",
-    "광장",
-    "버스 정류장",
-    "보행로",
-    "시장",
-    "주거 밀집",
-    "취약시설 주변",
-    "공공시설",
-  ];
-
   const [types, setTypes] = React.useState<Set<LocationType>>(() => new Set([ALL]));
-  const selectedTypesArr = React.useMemo(() => Array.from(types), [types]);
+  const selectedTypesArr = React.useMemo(() => [...types], [types]);
   const selectedTypesLabel = React.useMemo(
     () => (selectedTypesArr.includes(ALL) ? TYPES.filter((t) => t !== ALL).join(", ") : selectedTypesArr.join(", ")),
     [selectedTypesArr]
@@ -262,7 +328,7 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
     const candidates = allItems
       .map((it) => {
         const tags = normalizeLocTags(it.loc);
-        const matches = chosenTypes.has(ALL) || Array.from(chosenTypes).some((t) => t !== ALL && tags.has(t));
+        const matches = chosenTypes.has(ALL) || [...chosenTypes].some((t) => t !== ALL && tags.has(t));
         if (!matches) return null;
 
         const annualPerUnit = calcAnnualPerUnit(it);
@@ -312,7 +378,7 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
 
         const matchedTypesText = chosenTypes.has(ALL)
           ? c.loc
-          : Array.from(chosenTypes)
+          : [...chosenTypes]
           .filter((t) => t !== ALL)
           .filter((t) => c.tags.has(t))
           .join(" / ") || c.loc;
@@ -357,10 +423,15 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
   const [reportAi, setReportAi] = React.useState<ReportContent | null>(null);
   const [reportSnapshot, setReportSnapshot] = React.useState<ReportText | null>(null);
   const [reportSnapshotMeta, setReportSnapshotMeta] = React.useState<ReportSnapshot | null>(null);
+  const [reportSignatureSnapshot, setReportSignatureSnapshot] = React.useState<string | null>(null);
 
   const [recStatus, setRecStatus] = React.useState<DocStatus>("idle");
   const [recOpen, setRecOpen] = React.useState(false);
+  const [recLoading, setRecLoading] = React.useState(false);
+  const [recAi, setRecAi] = React.useState<RecommendationText | null>(null);
   const [recSnapshot, setRecSnapshot] = React.useState<RecommendationText | null>(null);
+  const [recSnapshotPlan, setRecSnapshotPlan] = React.useState<typeof recPlan | null>(null);
+  const [recSignatureSnapshot, setRecSignatureSnapshot] = React.useState<string | null>(null);
 
   const reportA4Ref = React.useRef<HTMLDivElement | null>(null);
   const recA4Ref = React.useRef<HTMLDivElement | null>(null);
@@ -371,15 +442,20 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
     setReportAi(null);
     setReportSnapshot(null);
     setReportSnapshotMeta(null);
+    setReportSignatureSnapshot(null);
     setRecStatus("idle");
     setRecOpen(false);
+    setRecAi(null);
     setRecSnapshot(null);
+    setRecSnapshotPlan(null);
+    setRecSignatureSnapshot(null);
   };
 
   const genReport = async () => {
     if (!canGenerate || reportLoading) return;
     setReportStatus("idle");
     setReportSnapshot(reportText);
+    setReportSignatureSnapshot(buildReportSignature(years, budget, selectedTypesArr, pickedItems));
     setReportAi(null);
     setReportSnapshotMeta({
       years,
@@ -419,24 +495,61 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
         setReportAi(report);
       }
       setReportStatus("ready");
-      setReportOpen(true);
     } catch {
       console.log("[budgetSimulation/report] request failed");
       setReportStatus("ready");
-      setReportOpen(true);
     } finally {
       setReportLoading(false);
     }
   };
   const genRec = () => {
+    if (!canGenerate || recLoading) return;
+    setRecStatus("idle");
     setRecSnapshot(recText);
-    setRecStatus("ready");
-    setRecOpen(true);
+    setRecSnapshotPlan(recPlan);
+    setRecSignatureSnapshot(buildRecSignature(years, budget, selectedTypesArr, recPlan));
+    setRecAi(null);
+    setRecLoading(true);
+    const recItems = recPlan.items.map((item) => ({
+      name: item.name,
+      qty: item.qty,
+      unitPrice: item.unitPrice,
+      annualCostTotal: item.annualCostTotal,
+      initCostTotal: item.initCostTotal,
+      matchedTypesText: item.matchedTypesText,
+    }));
+    axios
+      .post("/api/budgetSimulation/reco", {
+        years,
+        budget,
+        sumInit: recPlan.sumInit,
+        sumAnnual: recPlan.sumAnnual,
+        sumTotal: recPlan.sumTotal,
+        usagePct: recPlan.usagePct,
+        remain: recPlan.remain,
+        totalQty: recPlan.totalQty,
+        locationTypes: selectedTypesArr,
+        items: recItems,
+      })
+      .then((res) => {
+        const recommendation = res?.data?.recommendation;
+        if (recommendation && recommendation.intro && recommendation.result) {
+          setRecAi(recommendation);
+        }
+        setRecStatus("ready");
+      })
+      .catch(() => {
+        setRecStatus("ready");
+      })
+      .finally(() => {
+        setRecLoading(false);
+      });
   };
 
   // ----- 복사용 텍스트 생성 -----
   const reportTextEffective: ReportContent | ReportText = reportAi ?? reportSnapshot ?? reportText;
-  const recTextEffective = recSnapshot ?? recText;
+  const recTextEffective = recAi ?? recSnapshot ?? recText;
+  const recPlanEffective = recSnapshotPlan ?? recPlan;
   const reportView = reportSnapshotMeta ?? {
     years,
     budget,
@@ -451,6 +564,14 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
   };
   const reportUsageColor = reportView.remain < 0 ? "rgba(229,57,53,0.75)" : "rgba(25,118,210,0.7)";
   const reportUsageBgColor = reportView.remain < 0 ? "rgba(229,57,53,0.18)" : "rgba(25,118,210,0.15)";
+  const reportStale =
+    reportStatus === "ready" &&
+    Boolean(reportSignatureSnapshot) &&
+    reportSignatureSnapshot !== buildReportSignature(years, budget, selectedTypesArr, pickedItems);
+  const recStale =
+    recStatus === "ready" &&
+    Boolean(recSignatureSnapshot) &&
+    recSignatureSnapshot !== buildRecSignature(years, budget, selectedTypesArr, recPlan);
   const expectedEffectLines = React.useMemo(
     () =>
       Array.isArray(reportTextEffective.expectedEffect)
@@ -502,13 +623,12 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
                   설치 유형 선택 후 문서를 생성해 확인합니다.
                 </Typography>
               </Box>
-              <Tooltip title={canGenerate ? "보고서 새로고침" : "예산 입력 및 품목 선택 후 사용 가능합니다."}>
+              <Tooltip title="문서 상태 초기화">
                 <span>
                     <IconButton
                       size="small"
                       onClick={() => {
                         resetDocs();
-                        void genReport();
                       }}
                       disabled={!canGenerate}
                       sx={{ border: "1px solid", borderColor: "divider", bgcolor: "background.paper" }}
@@ -618,14 +738,14 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
               <Tooltip title={canGenerate ? "추천서 생성하기" : "예산 입력 및 품목 선택 후 생성 가능합니다."}>
                 <span style={{ display: "block", width: "100%" }}>
                   <Button
-                    startIcon={<TipsAndUpdatesOutlinedIcon />}
+                    startIcon={recLoading ? <CircularProgress size={16} /> : <TipsAndUpdatesOutlinedIcon />}
                     variant="outlined"
                     onClick={genRec}
-                    disabled={!canGenerate}
+                    disabled={!canGenerate || recLoading}
                     fullWidth
                     sx={{ minWidth: 0 }}
                   >
-                    추천서 생성
+                    {recLoading ? "추천서 생성 중" : "추천서 생성"}
                   </Button>
                 </span>
               </Tooltip>
@@ -633,7 +753,9 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
           </Box>
 
           <Typography variant="caption" color="text.secondary">
-            * 문서는 예산 입력 후 생성됩니다.
+            {reportStale || recStale
+              ? "* 입력 변경 감지 -> 재생성 필요"
+              : "* 문서는 예산 입력 후 생성됩니다."}
           </Typography>
         </Stack>
       </Paper>
@@ -643,7 +765,6 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
         open={reportOpen}
         title="쿨링포그 설치 예산 검토 보고서"
         onClose={() => setReportOpen(false)}
-        onRegenerate={() => void genReport()}
       >
         <div ref={reportA4Ref}>
           <A4Shell title="쿨링포그 설치 예산 검토 보고서">
@@ -666,11 +787,10 @@ export default function AIDocumentsPanel(props: AIDocumentsPanelProps) {
         open={recOpen}
         title="예산 범위 내 구성 방안 추천서"
         onClose={() => setRecOpen(false)}
-        onRegenerate={genRec}
       >
         <div ref={recA4Ref}>
           <A4Shell title="예산 범위 내 구성 방안 추천서">
-            <RecSections recText={recTextEffective} recPlan={recPlan} />
+            <RecSections recText={recTextEffective} recPlan={recPlanEffective} />
           </A4Shell>
         </div>
       </RecDialog>

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
 const MODEL = 'gpt-4.1-mini';
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
     sumTotal: toNumber(body.sumTotal),
     usagePct: toNumber(body.usagePct),
     remain: toNumber(body.remain),
-    locationTypes: Array.isArray(body.locationTypes) ? body.locationTypes.map((t) => String(t)) : [],
+    locationTypes: Array.isArray(body.locationTypes) ? body.locationTypes.map(String) : [],
     topOpex: body.topOpex,
     items: items.map((item) => ({
       name: String(item?.name ?? ''),
@@ -204,7 +204,7 @@ export async function POST(req: Request) {
       outputText,
     });
   } catch (error: unknown) {
-    const axiosError = axios.isAxiosError(error) ? error : null;
+    const axiosError = isAxiosError(error) ? error : null;
     const status = axiosError?.response?.status ?? 500;
     const data = axiosError?.response?.data ?? error;
     return NextResponse.json({ success: false, error: data }, { status });

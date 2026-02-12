@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+﻿import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import type { SelectChangeEvent } from "@mui/material/Select";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import type { BudgetItem } from "@/types/budgetSimulation/budget";
@@ -21,7 +22,7 @@ type Props = {
   years: number;
   budget: number;
   budgetText: string;
-  onYearsChange: (value: unknown) => void;
+  onYearsChange: (event: SelectChangeEvent) => void;
   onBudgetChange: (value: string) => void;
   selectedItemCount: number;
   totalQty: number;
@@ -140,3 +141,4 @@ export default function BudgetSidebar({
     </Box>
   );
 }
+
