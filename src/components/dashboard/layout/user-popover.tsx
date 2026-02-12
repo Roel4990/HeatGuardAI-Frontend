@@ -89,7 +89,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          濡쒓렇?꾩썐
+          로그아웃
         </MenuItem>
       </MenuList>
     </Popover>
