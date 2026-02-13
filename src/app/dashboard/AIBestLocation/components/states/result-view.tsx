@@ -12,7 +12,8 @@ import CardSlider from "@/app/dashboard/AIBestLocation/components/card/card-slid
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+//import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import { createMapFocusHandler } from '../map-focus';
 
 function priorityText(cd: 0 | 1 | 2) {
@@ -35,7 +36,19 @@ export default function ResultView({
   const items = data?.data?.result ?? [];
   const resultAddress = data?.data?.result_address ?? '-';
   const resultCount = data?.data?.result_count ?? 0;
-  const [focusItem, setFocusItem] = React.useState<RecoLocItem | null>(null);
+	const totalScores = items
+		.map((item) => item.reco_loc_total_score)
+		.filter((score): score is number => typeof score === 'number');
+	const avgTotalScore =
+		totalScores.length > 0
+			? totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length
+			: null;
+	const avgTotalScoreText =
+		typeof avgTotalScore === 'number'
+			? avgTotalScore.toLocaleString('ko-KR', { maximumFractionDigits: 1 })
+			: '-';
+
+	const [focusItem, setFocusItem] = React.useState<RecoLocItem | null>(null);
   const [focusKey, setFocusKey] = React.useState(0);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const resetKey = `${resultKey}`;
@@ -93,12 +106,12 @@ export default function ResultView({
           unit="개소"
           icon={<PlaceOutlinedIcon />}
         />
-        <StateCard
-          label="예상 보호 인원"
-          value="25,345"
-          unit="명"
-          icon={<GroupOutlinedIcon />}
-        />
+				<StateCard
+					label="평균 종합점수"
+					value={avgTotalScoreText}
+					unit="점"
+					icon={<AssessmentOutlinedIcon />}
+				/>
       </Box>
 
       {/* 지도 */}
